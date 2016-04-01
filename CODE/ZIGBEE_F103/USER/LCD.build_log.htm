@@ -1,0 +1,59 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: ¦ÌVision V5.14.0.0
+Copyright (C) 2015 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: asdf asdf, asdf, LIC=VGX30-BDXPF-4S7Y4-F3C7N-1VVYL-MG1CS
+ 
+Tool Versions:
+Toolchain:       MDK-ARM Standard  Version: 5.14.0.0
+Toolchain Path:  F:\Keil_v5\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.05 update 1 (build 106)
+Assembler:       Armasm.exe V5.05 update 1 (build 106)
+Linker/Locator:  ArmLink.exe V5.05 update 1 (build 106)
+Library Manager: ArmAr.exe V5.05 update 1 (build 106)
+Hex Converter:   FromElf.exe V5.05 update 1 (build 106)
+CPU DLL:         SARMCM3.DLL V5.14.0.0
+Dialog DLL:      DARMSTM.DLL V1.65.0.0
+Target DLL:      Segger\JL2CM3.dll V2.99.13.0
+Dialog DLL:      TARMSTM.DLL V1.64.0.0
+ 
+<h2>Project:</h2>
+H:\other\STM32_ZIGBEE\Ë¢²ÊÆÁ\ZIGBEE_F103\USER\LCD.uvproj
+Project File Date:  04/01/2016
+
+<h2>Output:</h2>
+Build target 'Target 1'
+compiling main.c...
+..\HARDWARE\TempPre\bmp180.h(24): warning:  #1295-D: Deprecated declaration bmp180Convert - give arg types
+  void bmp180Convert();
+..\HARDWARE\TempPre\bmp180.h(27): warning:  #1295-D: Deprecated declaration DATA_Diplay - give arg types
+  void DATA_Diplay();
+..\HARDWARE\TempPre\bmp180.h(30): warning:  #1295-D: Deprecated declaration I2C_Start - give arg types
+  void I2C_Start();
+..\HARDWARE\TempPre\bmp180.h(31): warning:  #1295-D: Deprecated declaration I2C_Stop - give arg types
+  void I2C_Stop();
+..\HARDWARE\TempPre\bmp180.h(33): warning:  #1295-D: Deprecated declaration I2C_RecvACK - give arg types
+  char I2C_RecvACK();
+..\HARDWARE\TempPre\bmp180.h(42): warning:  #1-D: last line of file ends without a newline
+  #endif
+main.c(81): warning:  #223-D: function "BMP180_Test" declared implicitly
+                BMP180_Test();          
+main.c(51): warning:  #550-D: variable "fontx" was set but never used
+        u8 fontx[2];//gbkÂë
+main.c(52): warning:  #177-D: variable "sector_size" was declared but never referenced
+        u32 sector_size;
+main.c(53): warning:  #177-D: variable "key" was declared but never referenced
+        u8 key;
+main.c(55): warning:  #177-D: variable "filedir" was declared but never referenced
+        const char filedir[]="0:/PICTURE";
+main.c: 11 warnings, 0 errors
+linking...
+Program Size: Code=40514 RO-data=4154 RW-data=184 ZI-data=6360  
+FromELF: creating hex file...
+".\LCD.axf" - 0 Error(s), 11 Warning(s).
+</pre>
+</body>
+</html>
