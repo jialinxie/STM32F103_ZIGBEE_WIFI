@@ -149,15 +149,15 @@ u8 Read_TP_Once(void)
 //用来校准用的
 void Drow_Touch_Point(u8 x,u16 y)
 {
-	LCD_DrawLine(x-12,y,x+13,y);//横线
-	LCD_DrawLine(x,y-12,x,y+13);//竖线
-	LCD_DrawPoint(x+1,y+1);
-	LCD_DrawPoint(x-1,y+1);
-	LCD_DrawPoint(x+1,y-1);
-	LCD_DrawPoint(x-1,y-1);
+	LCD_DrawLine(x-12,y,x+13,y, BLUE);//横线
+	LCD_DrawLine(x,y-12,x,y+13, BLUE);//竖线
+	LCD_DrawPoint(x+1,y+1, BLUE);
+	LCD_DrawPoint(x-1,y+1, BLUE);
+	LCD_DrawPoint(x+1,y-1, BLUE);
+	LCD_DrawPoint(x-1,y-1, BLUE);
 	Draw_Circle(x,y,6);//画中心圈
 }	  
-
+#if 0
 
 //画一个大点
 //2*2的点			   
@@ -168,7 +168,7 @@ void Draw_Big_Point(u8 x,u16 y)
 	LCD_DrawPoint(x,y+1);
 	LCD_DrawPoint(x+1,y+1);	 	  	
 }
-
+#endif
 
 //转换结果
 //根据触摸屏的校准参数来决定转换后的结果,保存在X0,Y0中

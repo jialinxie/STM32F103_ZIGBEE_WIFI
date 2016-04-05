@@ -4,8 +4,6 @@
 #include "tm1638.h"
 #include "delay.h"
 //#include "gpio.h"
-unsigned char const keytab[]={0x01,0x02,0x10,0x0f,0x11,0x12,0x00,0x00,0x03,0x04,0x0e,0x0d,0x13,0x14,0x00,0x00,0x05,0x06,0x0c,0x0b,0x15,0x16,0x00,0x00,0x07,0x08,0x0a,0x09,0x17,0x18,00};	
-unsigned char const tab[]={0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F,0x77,0x7C,0x39,0x5E,0x79,0x71};//数码管0到F的显示
 
 //TM1638 STB接P9  CLK接PB4    DIO接PB8
 ////TM1638 STB接PA4  CLK接PA5    DIO接PA6
@@ -225,7 +223,7 @@ void Tm1638_Test(void)
 {
 	unsigned char i,j;
 
-	u8 tmp_fcs=0,tmp_len,tmp;
+	u8 tmp_fcs=0,tmp_len,tmp, keyDat ,t_kdat ,temp_keydat;
 	
 	for(i=0;i<16;i++)
 	{
@@ -240,23 +238,6 @@ void Tm1638_Test(void)
 		Write_oneLED(i,1);//i是第几个LED，j是LED的状态
 	  delay_ms(200);
 	}
-	
-		/*	while(1)
-	{
-		keyDat=Read_key();
-		if(keyDat!=0x47)
-				{
-					keyDat=keyDat-16;
-					if(t_kdat!=keyDat)
-					{
-					temp_keydat=keyDat & 0x0f;
-					Write_DATA(3<<1,tab[temp_keydat]);
-					temp_keydat=(keyDat & 0xf0)>>4;
-					Write_DATA(2<<1,tab[temp_keydat]);	
-					}						
-				}
-				t_kdat=keyDat;
-  }*/
 }
 
 void LED8_Display(unsigned char add,unsigned char DATA)

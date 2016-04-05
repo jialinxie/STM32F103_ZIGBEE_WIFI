@@ -380,7 +380,8 @@ void DATA_Diplay()
 	tmp[1]=outdata[4];
 	tmp[3]=outdata[5];
 
-	LCD_ShowString(80, 70, tmp);
+	LCD_ShowString(90, 70, tmp, BLACK, WHITE);
+	LCD_ShowString(122, 70, " C", BLACK, WHITE);
 	//printf("temperature=%c%c.%c\n",outdata[3],outdata[4],outdata[5]);
 	
 	temp_value = pressure;
@@ -393,7 +394,7 @@ void DATA_Diplay()
 	pres[4] = outdata[4];
 	pres[5] = outdata[5];	
 	
-	LCD_ShowString(80, 90, pres);
+	LCD_ShowString(90, 90, pres, BLACK, WHITE);
 	//printf("pressure=%c%c%c%c%c%c Pa\n",outdata[0],outdata[1],outdata[2],outdata[3],outdata[4],outdata[5]);
 }
 

@@ -363,7 +363,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_MD,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\HARDWARE\LED;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\STM32F10x_FWLib\inc;..\CORE;..\HARDWARE\TIMER;..\HARDWARE\LCD;..\HARDWARE\FLASH;..\HARDWARE\TOUCH;..\HARDWARE\24CXX;..\HARDWARE\IIC;..\HARDWARE\MMC_SD;..\HARDWARE\SPI;..\HARDWARE\RTC;..\TEXT;..\FATFS\src;..\FATFS\exfuns;..\JPEG;..\USB\CFG;..\USB\CORE;..\HARDWARE\TempPre;..\HARDWARE\TM1638</IncludePath>
+              <IncludePath>..\HARDWARE\LED;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\STM32F10x_FWLib\inc;..\CORE;..\HARDWARE\TIMER;..\HARDWARE\LCD;..\HARDWARE\FLASH;..\HARDWARE\TOUCH;..\HARDWARE\24CXX;..\HARDWARE\IIC;..\HARDWARE\MMC_SD;..\HARDWARE\SPI;..\HARDWARE\RTC;..\TEXT;..\FATFS\src;..\FATFS\exfuns;..\JPEG;..\USB\CFG;..\USB\CORE;..\HARDWARE\TempPre;..\HARDWARE\TM1638;..\HARDWARE\HZK</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -640,56 +640,6 @@
               <FileName>stm32f10x_wwdg.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\STM32F10x_FWLib\src\stm32f10x_wwdg.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>FATFS</GroupName>
-          <Files>
-            <File>
-              <FileName>diskio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\FATFS\src\diskio.c</FilePath>
-            </File>
-            <File>
-              <FileName>ff.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\FATFS\src\ff.c</FilePath>
-            </File>
-            <File>
-              <FileName>mycc936.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\FATFS\exfuns\mycc936.c</FilePath>
-            </File>
-            <File>
-              <FileName>exfuns.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\FATFS\exfuns\exfuns.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>TEXT</GroupName>
-          <Files>
-            <File>
-              <FileName>fontupd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\TEXT\fontupd.c</FilePath>
-            </File>
-            <File>
-              <FileName>text.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\TEXT\text.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>JPEG</GroupName>
-          <Files>
-            <File>
-              <FileName>picdecoder.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\JPEG\picdecoder.c</FilePath>
             </File>
           </Files>
         </Group>

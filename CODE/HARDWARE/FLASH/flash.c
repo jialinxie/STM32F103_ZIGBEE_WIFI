@@ -88,7 +88,7 @@ u16 SPI_Flash_ReadID(void)
 //pBuffer:数据存储区
 //ReadAddr:开始读取的地址(24bit)
 //NumByteToRead:要读取的字节数(最大65535)
-void SPI_Flash_Read(u8* pBuffer,u32 ReadAddr,u16 NumByteToRead)   
+void SPI_Flash_Read(u8* pBuffer,u32 ReadAddr,u32 NumByteToRead)   
 { 
  	u16 i;    												    
 	SPI_FLASH_CS=0;                            //使能器件   
@@ -161,7 +161,7 @@ void SPI_Flash_Write_NoCheck(u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)
 //WriteAddr:开始写入的地址(24bit)
 //NumByteToWrite:要写入的字节数(最大65535)  		   
 u8 SPI_FLASH_BUF[4096];
-void SPI_Flash_Write(u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)   
+void SPI_Flash_Write(u8* pBuffer,u32 WriteAddr,u32 NumByteToWrite)   
 { 
 	u32 secpos;
 	u16 secoff;

@@ -9,13 +9,13 @@
 #include "spi.h"
 #include "flash.h"
 #include "touch.h"
-#include "mmc_sd.h"
+//#include "mmc_sd.h"
 #include "tm1638.h"
 #include "ff.h"
 #include "integer.h"
 #include "diskio.h"
-#include "text.h"
-#include "fontupd.h"
+//#include "text.h"
+//#include "fontupd.h"
 #include "stdio.h"
 #include "string.h"
 //#include "picdecoder.h"
@@ -28,6 +28,22 @@ const u8 *COMPILED_DATE=__DATE__;//获得编译日期
 const u8 *COMPILED_TIME=__TIME__;//获得编译时间
 const u8* Week[7]={"Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"};
 
+unsigned char const keytab[]={0x01,0x02,0x10,0x0f,0x11,0x12,0x00,0x00,0x03,0x04,0x0e,0x0d,0x13,0x14,0x00,0x00,0x05,0x06,0x0c,0x0b,0x15,0x16,0x00,0x00,0x07,0x08,0x0a,0x09,0x17,0x18,00};	
+unsigned char const tab[]={0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F,0x77,0x7C,0x39,0x5E,0x79,0x71};//数码管0到F的显示
+
+//定义mp3指令
+u8 prev[4]  = {0x7E, 0x02, 0x02, 0xEF};
+u8 next[4]  = {0x7E, 0x02, 0x01, 0xEF};
+u8 play[4]  = {0x7E, 0x02, 0x0D, 0xEF};
+u8 pause[4] = {0x7E, 0x02, 0x0E, 0xEF};
+u8 vol_i[4] = {0x7E, 0x02, 0x04, 0xEF};
+u8 vol_d[4] = {0x7E, 0x02, 0x05, 0xEF};
+u8 stop[4]  = {0x7E, 0x02, 0x10, 0xEF};
+u8 mode_u[4]  = {0x7E, 0x02, 0, 0xEF};			//U盘
+u8 mode_tf[4] = {0x7E, 0x02, 0x01, 0xEF};   //TF
+u8 mode_flash[4] = {0x7E, 0x02, 0x04, 0xEF};//flash
+u8 num[4] = {0x7E, 0x02, 0x48, 0xEF};				//ask song num from U pan
+u8 point_num[6] = {0x7E, 0x04, 0x03, 0x00, 0x02, 0xEF};
 
 extern const unsigned char gImage_1[38400];
 extern const unsigned char gImage_2[38400];
@@ -45,20 +61,12 @@ void Load_Drow_Dialog(void)
 
 
 int main(void)
-{
-	u32 fontcnt;		  
+{	  
 	u8 i,j;
 	FATFS fs;
-	u8 fontx[2];//gbk码
-	u32 sector_size;
 	u8 key;
 	u8 t=0;	
-	////////
-	u8 t_kdat=0;
-	u8 temp_keydat;
-	u8 keyDat=0;
-	///////
-	const char filedir[]="0:/PICTURE";
+	u8 tmp_fcs=0,tmp_len,tmp, keyDat ,t_kdat ,temp_keydat;
 	
 	SystemInit();
 	delay_init(72);	     //延时初始化
@@ -71,7 +79,7 @@ int main(void)
 	
  	LED_Init();
 	LCD_Init();
-	RTC_Init();
+
 	init_TM1638();
 	AT24CXX_Init();		//IIC初始化
 	SPI_Flash_Init();   //SPI FLASH 初始化 
@@ -85,186 +93,111 @@ int main(void)
 	//SPI_Flash_Write((u8 *)gImage_3, 38400 * 2, 38400);	
 	//SPI_Flash_Write((u8 *)gImage_4, 38400 * 3, 38400);		
 	
+	//Ziku();
+	Tm1638_Test();		
 	LCD_ShowPic();
 	
+	RTC_Init();
+		
 	POINT_COLOR=BLACK;
-	//POINT_COLOR=GREEN;
-	LCD_DrawRectangle(1,1,239,319);
-	LCD_DrawRectangle(10,10,230,310);
+	LCD_DrawRectangle(1,1,239,319, BLACK);
+	LCD_DrawRectangle(10,10,230,310, BLACK);
 	LCD_Fill(10,120,120,175,GREEN);  LCD_Fill(120,120,230,175,GREEN);
-	LCD_ShowString(40,140,"mode1");	LCD_ShowString(150,140,"mode2");	
 	LCD_Fill(10,175,120,230,GREEN);  LCD_Fill(120,175,230,230,GREEN);
-	LCD_ShowString(40,195,"mode3");	LCD_ShowString(150,195,"mode4");	
+	LCD_DrawRectangle(10,120,120,175, BLACK); LCD_DrawRectangle(120,120,230,175, BLACK);
+	LCD_DrawRectangle(10,175,120,230, BLACK); LCD_DrawRectangle(120,175,230,230, BLACK);
+
+	delay_ms(1000);	
 	
-	LCD_DrawRectangle(10,120,120,175); LCD_DrawRectangle(120,120,230,175);
-	LCD_DrawRectangle(10,175,120,230); LCD_DrawRectangle(120,175,230,230);
+	USART2_Send(mode_tf,4);	
+	delay_ms(3000);	
+	USART2_Send(point_num,4);	
+	//delay_ms(3000);	
 	
-	//LCD_ShowString(70,15,"utZIGBEE BASE");	
-//	LCD_ShowString(30,60,"TEMP:12C");	LCD_ShowString(140,60,"BMP:2100P");	
-	
-  LCD_ShowString(50,245,"Zigbee Connecting.....");
-	delay_ms(1000);		
-	BMP180_Test();		
-	Tm1638_Test();	 			    	 
+	//USART2_Send(play,4);	
+	BMP180_Test();			 			    	 
 	
 	POINT_COLOR=RED;
  	POINT_COLOR=BLUE;  
 
-
-
-
-
-	while(1) //遍历GBK子库
-	{
-		
-		//bmp180Convert();
-		DATA_Diplay();
-		////按键判别
-    keyDat=Read_key();
-		keyDat=keyDat-16;
-		if(keyDat!=0x37)
-		{
-			if(keyDat!=t_kdat)
-				{
-					temp_keydat=keyDat & 0x0f;
-					LED8_Display(3,temp_keydat);
-					temp_keydat=(keyDat & 0xf0)>>4;
-					LED8_Display(2,temp_keydat);						
-   /////按键处理
-			switch(keyDat)	
-			{
-				case 0x01:
-						//USART2_Send(S1_Wave,6);
-					break;
-						//USART2_Send(S2_Wave,6);
-				case 0x02:
-						//USART2_Send(S3_Wave,6);
-					break;
-				case 0x03:
-						//USART2_Send(Mp3_Stop,4);
-					break;
-				case 0x04:
-						//USART2_Send(S5_Wave,6);
-					break;
-				case 0x05:
-						LCD_Fill(10,100,120,175,RED); 
-						LCD_ShowString(40,125,"Wave1");	
-				    LCD_DrawRectangle(10,100,120,175);
-					break;
-				case 0x06:
-						LCD_Fill(10,100,120,175,GREEN); 
-						LCD_ShowString(40,125,"mode1");	
-				    LCD_DrawRectangle(10,100,120,175);
-					break;
-			 case 0x08:
-					//	USART2_Send(Mp3_Play,4);
-					break;
-				 default:
-			}				
-				}
-				t_kdat=keyDat;
-  }
-  ///////////////////////////////////////
-
-		
-		fontcnt=0;
-		for(i=0x81;i<0xff;i++)
-		{		
-			fontx[0]=i;
-			POINT_COLOR=BLACK;
-			//LCD_ShowNum(138,150,i,3,16);//显示内码高字节    
-			for(j=0x40;j<0xfe;j++)
-			{
-				if(j==0x7f)continue;
-				fontcnt++;
-			 	fontx[1]=j;
-				//Show_Font(138,190,fontx,16,0);	  
-				t=200;
-				while(t--)//延时,同时扫描按键
-				{										  
-					delay_ms(1);
-				}
-				
-		if(t!=timer.sec)
-		{
-			t=timer.sec;
-			LCD_ShowNum(138,270,timer.w_year,4,16);	
-			//LCD_ShowString(154,270,"-");			
-			LCD_ShowNum(178,270,timer.w_month,2,16);	
-			//LCD_ShowString(178,270,"-");			
-			LCD_ShowNum(202,270,timer.w_date,2,16);	 
-		switch(timer.week)
-			//switch(7)
-			{
-				case 0:
-					LCD_ShowString(50,280,"Sunday   ");
-					break;
-				case 1:
-					LCD_ShowString(50,280,"Monday   ");
-					break;
-				case 2:
-					LCD_ShowString(50,280,"Tuesday  ");
-					break;
-				case 3:
-					LCD_ShowString(50,280,"Wednesday");
-					break;
-				case 4:
-					LCD_ShowString(50,280,"Thursday ");
-					break;
-				case 5:
-					LCD_ShowString(50,280,"Friday   ");
-					break;
-				case 6:
-					LCD_ShowString(50,280,"Saturday ");
-					break;  
-			}
-			LCD_ShowNum(138,290,timer.hour,2,16);	
-      LCD_ShowString(154,290,":");			
-			LCD_ShowNum(170,290,timer.min,2,16);	
-			LCD_ShowString(186,290,":");			
-			LCD_ShowNum(202,290,timer.sec,2,16);
-
-			//LED=!LED;
-			}   
-		}			 		   
-	}
-}
-	
-	/*Touch_Init();
-	delay_ms(1500);
-	Load_Drow_Dialog();	
+	LCD_ShowString(25, 130, "雨滴传感器", BLACK, GREEN);
+	LCD_ShowString(48, 150, "报警", BLACK, GREEN);
+	LCD_ShowString(30, 195, "火灾报警", BLACK, GREEN);
+	LCD_ShowString(142, 142, "振动报警", BLACK, GREEN);
+	LCD_ShowString(142, 195, "金属报警", BLACK, GREEN);	
+  LCD_ShowString(50,245,"Zigbee Connecting.....", BLACK, WHITE);
 	
 	while(1)
-	{	
-		if(Pen_Point.Key_Sta==Key_Down)//触摸屏被按下
-		{
-			Pen_Int_Set(0);//关闭中断
-			do
-			{
-				Convert_Pos();
-				Pen_Point.Key_Sta=Key_Up;
-				if(Pen_Point.X0>216&&Pen_Point.Y0<16)Load_Drow_Dialog();//清除
-				else 
-				{
-					Draw_Big_Point(Pen_Point.X0,Pen_Point.Y0);//画图	    
-					GPIOA->ODR|=1<<0;    //PA0 上拉	   
-				}
-			}while(PEN==0);//如果PEN一直有效,则一直执行
-			Pen_Int_Set(1);//开启中断
-		}else delay_ms(10);
-		if(key==1)//KEY0按下,则执行校准程序
-		{
-			LCD_Clear(WHITE);//清屏
-		  Touch_Adjust();  //屏幕校准 
-			Save_Adjdata();	 
-			Load_Drow_Dialog();
-		}
-		i++;
-		if(i==20)
-		{
-			i=0;
-			LED=!LED;
-		}
-	}*/
+	{		
+			t=200;
+			while(t--)//延时,同时扫描按键
+			{										  
+				keyDat=Read_key();
+				if(keyDat!=0x47)
+						{
+							keyDat=keyDat-16;
+							if(t_kdat!=keyDat)
+							{
+								temp_keydat=keyDat & 0x0f;
+								Write_DATA(3<<1,tab[temp_keydat]);
+								temp_keydat=(keyDat & 0xf0)>>4;
+								Write_DATA(2<<1,tab[temp_keydat]);	
+								
+								LCD_Fill(10,120,120,175,GREEN);  LCD_Fill(120,120,230,175,GREEN);
+								LCD_Fill(10,175,120,230,GREEN);  LCD_Fill(120,175,230,230,GREEN);								
+								LCD_DrawRectangle(10,120,120,175, BLACK); LCD_DrawRectangle(120,120,230,175, BLACK);
+								LCD_DrawRectangle(10,175,120,230, BLACK); LCD_DrawRectangle(120,175,230,230, BLACK);					
+								LCD_ShowString(25, 130, "雨滴传感器", BLACK, GREEN);
+								LCD_ShowString(48, 150, "报警", BLACK, GREEN);
+								LCD_ShowString(30, 195, "火灾报警", BLACK, GREEN);
+								LCD_ShowString(142, 142, "振动报警", BLACK, GREEN);
+								LCD_ShowString(142, 195, "金属报警", BLACK, GREEN);									
+								switch(keyDat)	
+								{
+									case 0x01:		//rain warning
+										//beep_on
+										LCD_Fill(10,120,120,175,RED);
+										LCD_ShowString(25, 130, "雨滴传感器", WHITE, RED);
+										LCD_ShowString(48, 150, "报警", WHITE, RED);												
+										//USART2_Send(S1_Wave,6);		//mp3 
+										break;
+									case 0x02:
+										//beep_on
+										LCD_Fill(120,120,230,175,RED);				
+										LCD_ShowString(142, 142, "振动报警", WHITE, RED);										
+										//USART2_Send(S3_Wave,6);
+										break;
+									case 0x03:
+										//beep_on
+										LCD_Fill(10,175,120,230,RED);
+										LCD_ShowString(30, 195, "火灾报警", WHITE, RED);								
+										//USART2_Send(Mp3_Stop,4);
+										break;
+									case 0x04:
+										//beep_on
+										LCD_Fill(120,175,230,230,RED);
+										LCD_ShowString(142, 195, "金属报警", WHITE, RED);										
+										//USART2_Send(S5_Wave,6);
+										break;
+									case 0x05:
+										//beep_off
+									  //close mp3
+										break;
+									case 0x06:
+										//disable_warning = true;
+										break;
+									case 0x07:
+										//disable_warning = false;
+										break;									
+								 case 0x08:
+										break;
+									 default:
+								}							
+							}						
+						}
+						t_kdat=keyDat;		
+			}
+		bmp180Convert();
+		DATA_Diplay();			
+	}
 }
-

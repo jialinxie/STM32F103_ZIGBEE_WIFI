@@ -2,13 +2,27 @@
 #include "stdlib.h"
 #include "font.h" 
 #include "usart.h"
-#include "delay.h"	 
+#include "delay.h"
+#include "Hzk16song.h"
 
 
 u16 DeviceCode;		   
 					 
 //画笔颜色,背景颜色
 u16 POINT_COLOR = 0x0000,BACK_COLOR = 0xFFFF;   
+
+//你
+u8 hz0[32]=				
+{
+0x10, 0x00, 0x10, 0xfc, 0x10, 0x04, 0x10, 0x08, 0xfc, 0x10, 0x24, 0x20, 0x24, 0x20, 0x25, 0xfe, 
+0x24, 0x20, 0x48, 0x20, 0x28, 0x20, 0x10, 0x20, 0x28, 0x20, 0x44, 0x20, 0x84, 0xa0, 0x00, 0x40 
+};
+//好
+u8 hz1[32]=			
+{
+0x08, 0x80, 0x08, 0x80, 0x08, 0x80, 0x11, 0xfe, 0x11, 0x02, 0x32, 0x04, 0x34, 0x20, 0x50, 0x20, 
+0x91, 0x28, 0x11, 0x24, 0x12, 0x24, 0x12, 0x22, 0x14, 0x22, 0x10, 0x20, 0x10, 0xa0, 0x10, 0x40 
+};
 
 #if 0
 const u8 gImage_1[38400] = { 
@@ -9770,7 +9784,7 @@ void LCD_SetCursor(u16 Xpos,u16 Ypos)
 //x:0~239
 //y:0~399
 //POINT_COLOR:此点的颜色
-void LCD_DrawPoint(u16 x,u16 y)
+void LCD_DrawPoint(u16 x,u16 y, u16 POINT_COLOR)
 {
 	LCD_SetCursor(x,y);        //设置光标位置 
 	LCD_INIT_REG(0x002C);      //开始写入GRAM
@@ -9934,7 +9948,7 @@ void LCD_Fill(u16 xsta,u16 ysta,u16 xend,u16 yend,u16 color)
 //画线
 //x1,y1:起点坐标
 //x2,y2:终点坐标  
-void LCD_DrawLine(u16 x1, u16 y1, u16 x2, u16 y2)
+void LCD_DrawLine(u16 x1, u16 y1, u16 x2, u16 y2, u16 color)
 {
 	u16 t; 
 	int xerr=0,yerr=0,delta_x,delta_y,distance; 
@@ -9954,7 +9968,7 @@ void LCD_DrawLine(u16 x1, u16 y1, u16 x2, u16 y2)
 	else distance=delta_y; 
 	for(t=0;t<=distance+1;t++ )//画线输出 
 	{  
-		LCD_DrawPoint(uRow,uCol);//画点 
+		LCD_DrawPoint(uRow,uCol, BLUE);//画点 
 		xerr+=delta_x ; 
 		yerr+=delta_y ; 
 		if(xerr>distance) 
@@ -9970,15 +9984,16 @@ void LCD_DrawLine(u16 x1, u16 y1, u16 x2, u16 y2)
 	}  
 }   
 
-
+#if 1
 //画矩形
-void LCD_DrawRectangle(u16 x1, u16 y1, u16 x2, u16 y2)
+void LCD_DrawRectangle(u16 x1, u16 y1, u16 x2, u16 y2, u16 POINT_COLOR)
 {
-	LCD_DrawLine(x1,y1,x2,y1);
-	LCD_DrawLine(x1,y1,x1,y2);
-	LCD_DrawLine(x1,y2,x2,y2);
-	LCD_DrawLine(x2,y1,x2,y2);
+	LCD_DrawLine(x1,y1,x2,y1, POINT_COLOR);
+	LCD_DrawLine(x1,y1,x1,y2, POINT_COLOR);
+	LCD_DrawLine(x1,y2,x2,y2, POINT_COLOR);
+	LCD_DrawLine(x2,y1,x2,y2, POINT_COLOR);
 }
+#endif
 
 
 //在指定位置画一个指定大小的圆
@@ -9988,19 +10003,20 @@ void Draw_Circle(u16 x0,u16 y0,u8 r)
 {
 	int a,b;
 	int di;
+	u16 colortemp=POINT_COLOR;      
 	a=0;b=r;	  
 	di=3-(r<<1);             //判断下个点位置的标志
 	while(a<=b)
 	{
-		LCD_DrawPoint(x0-b,y0-a);             //3           
-		LCD_DrawPoint(x0+b,y0-a);             //0           
-		LCD_DrawPoint(x0-a,y0+b);             //1       
-		LCD_DrawPoint(x0-b,y0-a);             //7           
-		LCD_DrawPoint(x0-a,y0-b);             //2             
-		LCD_DrawPoint(x0+b,y0+a);             //4               
-		LCD_DrawPoint(x0+a,y0-b);             //5
-		LCD_DrawPoint(x0+a,y0+b);             //6 
-		LCD_DrawPoint(x0-b,y0+a);             
+		LCD_DrawPoint(x0-b,y0-a, colortemp);             //3           
+		LCD_DrawPoint(x0+b,y0-a, colortemp);             //0           
+		LCD_DrawPoint(x0-a,y0+b, colortemp);             //1       
+		LCD_DrawPoint(x0-b,y0-a, colortemp);             //7           
+		LCD_DrawPoint(x0-a,y0-b, colortemp);             //2             
+		LCD_DrawPoint(x0+b,y0+a, colortemp);             //4               
+		LCD_DrawPoint(x0+a,y0-b, colortemp);             //5
+		LCD_DrawPoint(x0+a,y0+b, colortemp);             //6 
+		LCD_DrawPoint(x0-b,y0+a, colortemp);             
 		a++;
 		//使用Bresenham算法画圆     
 		if(di<0)di +=4*a+6;	  
@@ -10009,7 +10025,7 @@ void Draw_Circle(u16 x0,u16 y0,u8 r)
 			di+=10+4*(a-b);   
 			b--;
 		} 
-		LCD_DrawPoint(x0+a,y0+b);
+		LCD_DrawPoint(x0+a,y0+b, colortemp);
 	}
 } 
 
@@ -10026,7 +10042,7 @@ void Draw_Circle(u16 x0,u16 y0,u8 r)
 //num:要显示的字符:" "--->"~"
 //size:字体大小 12/16
 //mode:叠加方式(1)还是非叠加方式(0)
-void LCD_ShowChar(u16 x,u16 y,u8 num,u8 size,u8 mode)
+void LCD_ShowChar(u16 x,u16 y,u8 num,u8 size,u8 mode, u16 POINT_COLOR, u16 BACK_COLOR)
 {  
 #if USE_HORIZONTAL==1
 #define MAX_CHAR_POSX 312
@@ -10052,7 +10068,7 @@ void LCD_ShowChar(u16 x,u16 y,u8 num,u8 size,u8 mode)
 		    {                 
 		        if(temp&0x01)POINT_COLOR=colortemp;
 				else POINT_COLOR=BACK_COLOR;
-				LCD_DrawPoint(x,y);	
+				LCD_DrawPoint(x,y, POINT_COLOR);	
 				temp>>=1; 
 				x++;
 		    }
@@ -10067,7 +10083,7 @@ void LCD_ShowChar(u16 x,u16 y,u8 num,u8 size,u8 mode)
 			else temp=asc2_1608[num][pos];		 //调用1608字体
 			for(t=0;t<size/2;t++)
 		    {                 
-		        if(temp&0x01)LCD_DrawPoint(x+t,y+pos);//画一个点     
+		        if(temp&0x01)LCD_DrawPoint(x+t,y+pos, POINT_COLOR);//画一个点     
 		        temp>>=1; 
 		    }
 		}
@@ -10102,14 +10118,43 @@ void LCD_ShowNum(u16 x,u16 y,u32 num,u8 len,u8 size)
 		{
 			if(temp==0)
 			{
-				LCD_ShowChar(x+(size/2)*t,y,' ',size,0);
+				LCD_ShowChar(x+(size/2)*t,y,' ',size,0, BLACK, WHITE);
 				continue;
 			}else enshow=1; 
 		 	 
 		}
-	 	LCD_ShowChar(x+(size/2)*t,y,temp+'0',size,0); 
+	 	LCD_ShowChar(x+(size/2)*t,y,temp+'0',size,0, BLACK, WHITE); 
 	}
 } 
+
+/**
+	*名称：void LCD_ShowString(u16 x0, u16 y0, u8 *pcstr, u16 PenColor, u16 BackColor)
+	*参数：x0 y0     起始坐标
+		   pcstr     字符串指针
+		   PenColor  字体颜色
+		   BackColor 字体背景色
+	*功能：调用字符和汉字显示函数，实现字符串显示
+	*备注：	
+**/
+void LCD_ShowString(u16 x0, u16 y0, u8 *pcStr, u16 PenColor, u16 BackColor)
+{
+	//while(*pcStr!='\0')
+	while(*pcStr)
+	{
+		if(*pcStr>0xa1) /*显示汉字*/
+		{
+			LCD_ShowHzString(x0, y0, pcStr, PenColor, BackColor);
+			pcStr += 2;
+			x0 += 16;	
+		}
+		else           /*显示字符*/
+		{
+			LCD_ShowCharString(x0, y0, pcStr, PenColor, BackColor);	
+			pcStr +=1;
+			x0+= 8;
+		}
+	}	
+}
 
 
 //显示2个数字
@@ -10123,7 +10168,7 @@ void LCD_Show2Num(u16 x,u16 y,u16 num,u8 len,u8 size,u8 mode)
 	for(t=0;t<len;t++)
 	{
 		temp=(num/mypow(10,len-t-1))%10;
-	 	LCD_ShowChar(x+(size/2)*t,y,temp+'0',size,mode); 
+	 	LCD_ShowChar(x+(size/2)*t,y,temp+'0',size,mode, RED, WHITE); 
 	}
 } 
 
@@ -10132,13 +10177,13 @@ void LCD_Show2Num(u16 x,u16 y,u16 num,u8 len,u8 size,u8 mode)
 //x,y:起点坐标  
 //*p:字符串起始地址
 //用16字体
-void LCD_ShowString(u16 x,u16 y,const u8 *p)
+void LCD_ShowCharString(u16 x,u16 y,const u8 *p, u16 PenColor, u16 BackColor)
 {         
     while(*p!='\0')
     {       
         if(x>MAX_CHAR_POSX){x=0;y+=16;}
         if(y>MAX_CHAR_POSY){y=x=0;LCD_Clear(WHITE);}
-        LCD_ShowChar(x,y,*p,16,0);
+        LCD_ShowChar(x,y,*p,16,0, PenColor, BackColor);
         x+=8;
         p++;
     }  
@@ -10159,3 +10204,67 @@ void LCD_ShowPic(void)
 		LCD_WR_DATA(a[0] + (b[0]  << 8)); 
 	}
 } 
+
+/**
+	*名称：void LCD_ShowHzString(u16 x0, u16 y0, u8 *pcStr, u16 PenColor, u16 BackColor)
+	*参数：x0，y0    起始坐标
+		   pcStr     指向
+		   PenColor  字体颜色
+		   BackColor 字体背景
+	*功能：显示汉字字符串
+	*备注：这个函数不能单独调用	       
+**/
+void LCD_ShowHzString(u16 x, u16 y, u8 *c, u16 PenColor, u16 BackColor)
+{
+	int i,j;//,x,y;
+	u8 buffer[32];
+	u16 tmp_char=0;
+	u8 High8bit,Low8bit;
+	unsigned int c1,c2;
+	unsigned int c3=0;
+	unsigned char *c4;
+
+	c1=*c;	   //区号
+	c2=*(c+1);	   //位号	修改正确
+	c3=((c1-0xa1)*0x5e+(c2-0xa1))*0x20;   //汉字在字库中的地址	
+	
+	SPI_Flash_Read(buffer, c3 + 204800, 32);
+	
+	/* 16*16汉字点阵，共有16行 每行16个点，存储的时候是以字节为单位
+	   需合并成字*/
+	for (i=0;i<16;i++)		 
+	{
+		tmp_char=buffer[i*2];
+		tmp_char=(tmp_char<<8);
+		tmp_char|=buffer[2*i+1];  /*现在tmp_char存储着一行的点阵数据*/
+
+		for (j=0;j<16;j++)
+		{
+			if((tmp_char>>15-j) & 0x01 == 0x01)
+			{
+				LCD_DrawPoint(x+j,y+i,PenColor);   /* 字符颜色 */
+			}
+			else
+			{
+				LCD_DrawPoint(x+j,y+i,BackColor);     /* 背景颜色 */
+			}
+		}
+	}
+
+}
+
+
+/*
+					sector   -> address
+//start add: 50    -> 204800
+//sum of length: 267616 bytes
+*/
+void Ziku(void)
+{
+	u8 test[6] = {0};
+		SPI_Flash_Read(test, 204800 + 4 * 66904 - 112 , 6);
+		//SPI_Flash_Write((u8 *)HZK16_1, 204800, 							66904);	
+		//SPI_Flash_Write((u8 *)HZK16_2, 204800 + 66904, 			66904);
+		//SPI_Flash_Write((u8 *)HZK16_3, 204800 + 2 * 66904, 	66904);
+		//SPI_Flash_Write((u8 *)HZK16_4, 204800 + 3 * 66904, 	66904);	
+}

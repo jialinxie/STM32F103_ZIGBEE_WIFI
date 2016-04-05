@@ -33,3 +33,5 @@
 .\rtc.o: ..\SYSTEM\delay\delay.h
 .\rtc.o: ..\SYSTEM\usart\usart.h
 .\rtc.o: F:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\rtc.o: ..\HARDWARE\LCD\lcd.h
+.\rtc.o: F:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h

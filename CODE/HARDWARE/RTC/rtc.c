@@ -2,6 +2,7 @@
 #include "rtc.h" 
 #include "delay.h"
 #include "usart.h" 
+#include "lcd.h"
 
 
 tm timer;//时钟结构体 	   
@@ -75,7 +76,21 @@ void RTC_IRQHandler(void)
 		//闹钟处理
 		} 				  								 
 	RTC->CRL&=0X0FFA;         //清除溢出，秒钟中断标志
-	while(!(RTC->CRL&(1<<5)));//等待RTC寄存器操作完成		   							 	   	 
+	while(!(RTC->CRL&(1<<5)));//等待RTC寄存器操作完成		 
+		#if 1
+			LCD_ShowNum(120,270,timer.w_year,4,16);	
+			LCD_ShowString(152,270," -", BLACK, WHITE);			
+			LCD_ShowNum(168,270,timer.w_month,2,16);	
+			LCD_ShowString(184,270," -", BLACK, WHITE);			
+			LCD_ShowNum(200,270,timer.w_date,2,16);	 
+			
+			LCD_ShowString(50,290,"Tuesday", BLACK, WHITE);
+			LCD_ShowNum(120,290,timer.hour,2,16);	
+      LCD_ShowString(136,290,":", BLACK, WHITE);			
+			LCD_ShowNum(144,290,timer.min,2,16);	
+			LCD_ShowString(160,290,": ", BLACK, WHITE);			
+			LCD_ShowNum(168,290,timer.sec,2,16);		
+		#endif
 }
  
 

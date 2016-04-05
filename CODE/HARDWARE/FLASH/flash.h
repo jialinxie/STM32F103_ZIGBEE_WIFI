@@ -37,8 +37,8 @@ u8	 SPI_Flash_ReadSR(void);        //读取状态寄存器
 void SPI_FLASH_Write_SR(u8 sr);  	//写状态寄存器
 void SPI_FLASH_Write_Enable(void);  //写使能 
 void SPI_FLASH_Write_Disable(void);	//写保护
-void SPI_Flash_Read(u8* pBuffer,u32 ReadAddr,u16 NumByteToRead);   //读取flash
-void SPI_Flash_Write(u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite);//写入flash
+void SPI_Flash_Read(u8* pBuffer,u32 ReadAddr,u32 NumByteToRead);   //读取flash
+void SPI_Flash_Write(u8* pBuffer,u32 WriteAddr,u32 NumByteToWrite);//写入flash
 void SPI_Flash_Erase_Chip(void);    	  //整片擦除
 void SPI_Flash_Erase_Sector(u32 Dst_Addr);//扇区擦除
 void SPI_Flash_Wait_Busy(void);           //等待空闲

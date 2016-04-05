@@ -35,3 +35,4 @@
 .\lcd.o: ..\SYSTEM\usart\usart.h
 .\lcd.o: F:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 .\lcd.o: ..\SYSTEM\delay\delay.h
+.\lcd.o: ..\HARDWARE\HZK\Hzk16song.h

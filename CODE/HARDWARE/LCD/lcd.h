@@ -75,20 +75,22 @@ extern u16 BACK_COLOR, POINT_COLOR ;
 void LCD_Init(void);
 void LCD_Clear(u16 Color);	 
 void LCD_SetCursor(u16 Xpos, u16 Ypos);
-void LCD_DrawPoint(u16 x,u16 y);//画点
+void LCD_DrawPoint(u16 x,u16 y, u16 POINT_COLOR);//画点
 u16  LCD_ReadPoint(u16 x,u16 y); //读点
 void Draw_Circle(u16 x0,u16 y0,u8 r);
-void LCD_DrawLine(u16 x1, u16 y1, u16 x2, u16 y2);
-void LCD_DrawRectangle(u16 x1, u16 y1, u16 x2, u16 y2);		   
+void LCD_DrawLine(u16 x1, u16 y1, u16 x2, u16 y2, u16 color);
+void LCD_DrawRectangle(u16 x1, u16 y1, u16 x2, u16 y2, u16 POINT_COLOR);		   
 void LCD_Fill(u16 xsta,u16 ysta,u16 xend,u16 yend,u16 color);
-void LCD_ShowChar(u16 x,u16 y,u8 num,u8 size,u8 mode);//显示一个字符
+void LCD_ShowChar(u16 x,u16 y,u8 num,u8 size,u8 mode, u16 POINT_COLOR, u16 BACK_COLOR);//显示一个字符
 void LCD_ShowNum(u16 x,u16 y,u32 num,u8 len,u8 size);  //显示一个数字
 void LCD_Show2Num(u16 x,u16 y,u16 num,u8 len,u8 size,u8 mode);//显示2个数字
-void LCD_ShowString(u16 x,u16 y,const u8 *p);		 //显示一个字符串,16字体
+void LCD_ShowCharString(u16 x,u16 y,const u8 *p, u16 PenColor, u16 BackColor);		 //显示一个字符串,16字体
+void LCD_ShowHzString(u16 x, u16 y, u8 *c, u16 PenColor, u16 BackColor);
 									    
 u16 LCD_ReadReg(u16 LCD_Reg);
 void LCD_WriteRAM_Prepare(void);
-u16 LCD_ReadRAM(void);		   
+u16 LCD_ReadRAM(void);		 
+void Ziku(void);
 
  
 #define LCD_WR_DATA(data){\

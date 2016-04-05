@@ -41,13 +41,10 @@
 .\main.o: ..\HARDWARE\SPI\spi.h
 .\main.o: ..\HARDWARE\FLASH\flash.h
 .\main.o: ..\HARDWARE\TOUCH\touch.h
-.\main.o: ..\HARDWARE\MMC_SD\mmc_sd.h
 .\main.o: ..\HARDWARE\TM1638\tm1638.h
 .\main.o: ..\FATFS\src\ff.h
 .\main.o: ..\FATFS\src\integer.h
 .\main.o: ..\FATFS\src\ffconf.h
 .\main.o: ..\FATFS\src\diskio.h
-.\main.o: ..\TEXT\text.h
-.\main.o: ..\TEXT\fontupd.h
 .\main.o: F:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\main.o: ..\HARDWARE\TempPre\bmp180.h
