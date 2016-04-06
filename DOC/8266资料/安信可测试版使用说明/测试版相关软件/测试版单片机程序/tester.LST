@@ -1,0 +1,474 @@
+C51 COMPILER V9.00   TESTER                                                                04/22/2015 15:57:44 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE TESTER
+OBJECT MODULE PLACED IN tester.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE tester.c LARGE BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /*************  本地常量声明    **************/
+   2          #define MAIN_Fosc               22118400L       //定义主时钟
+   3          #define RX1_Lenth               32                      //串口接收缓冲长度
+   4          //#define       BaudRate1               9600UL  //选择波特率
+   5          //#define       Timer1_Reload   (65536UL -(MAIN_Fosc / 4 / BaudRate1))          //Timer 1 重装值， 对应300KHZ
+   6          //#define       Timer2_Reload   (65536UL -(MAIN_Fosc / 4 / BaudRate1))          //Timer 2 重装值， 对应300KHZ
+   7          #include"STC15Fxxxx.H"
+   8          #include<intrins.h>
+   9          #define uchar unsigned char
+  10          #define uint unsigned int
+  11          /*************  本地变量声明    **************/
+  12          u8      idata RX1_Buffer[RX1_Lenth];    //接收缓冲
+  13          u8      TX1_Cnt;        //发送计数
+  14          u8      RX1_Cnt;        //接收计数
+  15          bit     B_TX1_Busy;     //发送忙标志
+  16          /*************  端口引脚定义    **************/
+  17          sbit LED1=P1^0;//LED1
+  18          sbit LED2=P1^1;//LED2
+  19          sbit LED3=P3^7;//LED3
+  20          sbit DK1=P3^3;//继电器
+  21          sbit BEEP=P3^4;//蜂鸣器
+  22          sbit K1=P1^3;//按键1
+  23          sbit K2=P1^2;//按键2
+  24          sbit K3=P1^4;//按键3
+  25          sbit DQ=P1^6;//18B20温度传感器
+  26          char led1bl,led2bl,led3bl;
+  27          #define jump_ROM 0xCC                   //跳过ROM命令
+  28          #define start    0x44               //启动转换命令
+  29          #define read_EEROM 0xBE                 //读存储器命令
+  30          uchar TMPH,TMPL;                //温度值
+  31          uchar HL;                      //当前温度
+  32          unsigned char LYMS[13]="AT+CWMODE=2\r\n";
+  33          unsigned char SZLY[38]="AT+CWSAP='ESP8266','0123456789',11,0\r\n";
+  34          unsigned char RST[8]="AT+RST\r\n";
+  35          unsigned char SZDLJ[13]="AT+CIPMUX=1\r\n";
+  36          unsigned char KQFU[21]="AT+CIPSERVER=1,5000\r\n";
+  37          unsigned char FSSJ[13]="AT+CIPSEND=\r\n";//AT+CIPSEND= 发送数据
+  38          unsigned char WDSJ[4]={0x00,0x00,0x00,0x00};
+  39          void Delay1(unsigned long ms)
+  40          {
+  41   1              unsigned char i, j,k;
+  42   1              for(k=0;k<ms;k++)
+  43   1              {
+  44   2                      _nop_();
+  45   2                      _nop_();
+  46   2                      i = 22;
+  47   2                      j = 128;
+  48   2                      do
+  49   2                      {
+  50   3                              while (--j);
+  51   3                      } while (--i);
+  52   2              }
+  53   1      }
+  54          void Delay2(unsigned long cnt)
+  55          {
+C51 COMPILER V9.00   TESTER                                                                04/22/2015 15:57:44 PAGE 2   
+
+  56   1              long i;
+  57   1              for(i=0;i<cnt*100;i++);
+  58   1      }
+  59          void Delay3(unsigned int N) 
+  60          {
+  61   1              int i;
+  62   1              for(i=0;i<N*10;i++);
+  63   1      }
+  64          //--------------------
+  65          // 函数名称： Reset
+  66          // 入口参数： 无
+  67          // 返回deceive_ready
+  68          // 函数功能：复位 
+  69          //--------------------
+  70          unsigned char Reset(void) 
+  71          {
+  72   1              unsigned char deceive_ready;
+  73   1              Delay3(10); 
+  74   1              DQ=0;                               //拉低DQ线 
+  75   1              Delay3(29);                          //延时至少480us~960us
+  76   1              DQ=1;                               //将DQ线设置位逻辑高    
+  77   1              Delay3(3);                           //延时等待deceive_ready响应 
+  78   1              deceive_ready=DQ;                   //采样deceive_ready信号
+  79   1              Delay3(25);                          //等待时序结束
+  80   1              return(deceive_ready);              //有deceive_ready信号时返回0，否则返回1
+  81   1      }
+  82          
+  83          
+  84          //---------------------------
+  85          // 函数名称：read_bit
+  86          // 入口参数： 无
+  87          // 返回接收的数据
+  88          // 函数功能：读一个bit子程序 
+  89          //---------------------------
+  90          unsigned char read_bit(void)
+  91          {
+  92   1              unsigned char i;
+  93   1              DQ=0;                                 //拉低DQ线开始时序
+  94   1              DQ=1;                                 //升高DQ线                        
+  95   1              for(i=0;i<3;i++);         //延时至时序开始15us
+  96   1              return(DQ);                           //返回DQ值
+  97   1      }
+  98          
+  99          
+ 100          //---------------------------
+ 101          // 函数名称： write_bit
+ 102          // 入口参数： bitval
+ 103          // 函数功能：写一个bit子程序 
+ 104          //---------------------------
+ 105          void write_bit(unsigned char bitval)
+ 106          {
+ 107   1              DQ=0;                             //拉低DQ线开始时序
+ 108   1              if(bitval==1)
+ 109   1                      DQ=1;                             //如果写逻辑为高
+ 110   1              Delay3(5);                         //延时 
+ 111   1              DQ=1;                             //升高DQ线 
+ 112   1      }
+ 113          
+ 114          
+ 115          //----------------------------
+ 116          // 函数名称： write_byte
+ 117          // 入口参数： val
+C51 COMPILER V9.00   TESTER                                                                04/22/2015 15:57:44 PAGE 3   
+
+ 118          // 函数功能：写一个byte子程序 
+ 119          //----------------------------
+ 120          void write_byte(unsigned char val)
+ 121          {
+ 122   1              unsigned char i,temp;
+ 123   1              for(i=0;i<8;i++)
+ 124   1              {
+ 125   2                      temp=val>>i;                        //将val位右移i位赋值给比temp
+ 126   2                      temp=temp&0x01;                     //取temp最低位
+ 127   2                      write_bit(temp);
+ 128   2                      Delay3(5);                           //延时至时序结束
+ 129   2              }
+ 130   1      }
+ 131          
+ 132          
+ 133          //----------------------------
+ 134          // 函数名称： read_byte
+ 135          // 返回接收的数据 value
+ 136          // 函数功能：读一个byte子程序 
+ 137          //----------------------------
+ 138          unsigned char read_byte(void)
+ 139          {
+ 140   1              unsigned char i,m,receive_data;
+ 141   1              m=1;receive_data=0;                          //初始化
+ 142   1              for(i=0;i<8;i++)
+ 143   1              {
+ 144   2                      if(read_bit()) 
+ 145   2                      {
+ 146   3                              receive_data=receive_data+(m<<i);
+ 147   3                      }                                          //每读一位数据据，左移一位 
+ 148   2                      Delay3(6);                                  //延时至时序结束 
+ 149   2              } 
+ 150   1              return(receive_data);                        //返回value
+ 151   1      }
+ 152          
+ 153          
+ 154          //---------------------------
+ 155          // 函数名称： Get_temp
+ 156          // 返回接收的数据 TMPL, TMPH
+ 157          // 函数功能：取出温度值
+ 158          //---------------------------
+ 159          uint Get_temp(void)
+ 160          {
+ 161   1              unsigned int T;
+ 162   1              //EA = 0;
+ 163   1              Reset();
+ 164   1              write_byte(jump_ROM);       //发跳过ROM命令
+ 165   1              write_byte(start);          //发启动转换命令
+ 166   1              Reset();
+ 167   1              write_byte(jump_ROM);       //发跳过ROM命令
+ 168   1              write_byte(read_EEROM);     //发跳过ROM命令
+ 169   1              TMPL=read_byte();           //读低8位温度值
+ 170   1              TMPH=read_byte();           //读高8位温度值
+ 171   1              
+ 172   1              //EA = 0;
+ 173   1              T=TMPL+TMPH*256;     
+ 174   1              if(T==0xFFFF) return 0xFFFF;
+ 175   1              if(T>0x8000)   //温度为负
+ 176   1              {
+ 177   2                      T=~T+1;
+ 178   2                      return(0x8000+T*5/8);
+ 179   2              }
+C51 COMPILER V9.00   TESTER                                                                04/22/2015 15:57:44 PAGE 4   
+
+ 180   1              else     //温度位正
+ 181   1              {
+ 182   2                      return(T*5/8);
+ 183   2              }
+ 184   1      }
+ 185          void UARTSendByte(unsigned char byte)//?????????
+ 186          {
+ 187   1              SBUF=byte;              //???????????
+ 188   1              while(TI==0);          //??????,TI?????1
+ 189   1              TI=0;                    //?????????
+ 190   1      }
+ 191          void DisplayTemp(unsigned int temp)
+ 192          {
+ 193   1              uchar i=0;
+ 194   1              uchar TmpTable[3] = {0};
+ 195   1              TmpTable[ 0 ] = (temp%1000)/100;
+ 196   1              TmpTable[ 1 ] = (temp%100)/10;
+ 197   1              TmpTable[ 2 ] = (temp%10);
+ 198   1      
+ 199   1      //      UARTSendByte(TmpTable[0] + 0x30);Delay3(9);
+ 200   1      //      UARTSendByte(TmpTable[1] + 0x30);Delay3(9);
+ 201   1      //      UARTSendByte('.');Delay3(9);
+ 202   1      //      UARTSendByte(TmpTable[2] + 0x30);Delay3(9);     
+ 203   1      //      UARTSendByte(0x0d);Delay3(9);   
+ 204   1      //      UARTSendByte(0x0a);Delay3(9);
+ 205   1              WDSJ[0]=(TmpTable[0] + 0x30);
+ 206   1              WDSJ[1]=(TmpTable[1] + 0x30);
+ 207   1              WDSJ[2]=('.');
+ 208   1              WDSJ[3]=(TmpTable[2] + 0x30);   
+ 209   1      }
+ 210          void main(void)
+ 211          {
+ 212   1              char i=0;
+ 213   1              B_TX1_Busy = 0;
+ 214   1              RX1_Cnt = 0;
+ 215   1              TX1_Cnt = 0;
+ 216   1              S1_8bit();                              //8位数据
+ 217   1              S1_USE_P30P31();                //UART1 使用P30 P31口   默认
+ 218   1              /*AUXR &= ~(1<<4);      //Timer stop            波特率使用Timer2产生
+ 219   1              AUXR |= 0x01;           //S1 BRT Use Timer2;
+ 220   1              AUXR |=  (1<<2);        //Timer2 set as 1T mode
+ 221   1              TH2 = (u8)(Timer2_Reload >> 8);
+ 222   1              TL2 = (u8)Timer2_Reload;
+ 223   1              AUXR |=  (1<<4);        //Timer run enable
+ 224   1              REN = 1;        //允许接收
+ 225   1              ES  = 1;        //允许中断
+ 226   1              EA = 1;         //允许全局中断*/
+ 227   1              S2CON = 0x50;           //8位数据,可变波特率
+ 228   1              AUXR |= 0x04;           //定时器2时钟为Fosc,即1T
+ 229   1              T2L = 0xD0;             //设定定时初值
+ 230   1              T2H = 0xFF;             //设定定时初值
+ 231   1              AUXR |= 0x10;           //启动定时器2
+ 232   1              REN = 1;        //允许接收
+ 233   1              ES  = 1;        //允许中断
+ 234   1              EA = 1;         //允许全局中断*/
+ 235   1              P3M1 = 0x00;
+ 236   1          P3M0 = 0xFF;
+ 237   1              RX1_Cnt=0;
+ 238   1              DK1=0;
+ 239   1              BEEP=0;
+ 240   1              Delay2(2000);
+ 241   1              for(i=0;i<13;i++)//AT+CWMODE=2 设置成路由模式
+C51 COMPILER V9.00   TESTER                                                                04/22/2015 15:57:44 PAGE 5   
+
+ 242   1              {
+ 243   2                      SBUF=LYMS[i];Delay1(5);
+ 244   2              }
+ 245   1              Delay2(1000);
+ 246   1              for(i=0;i<38;i++)//AT+CWSAP="ESP8266","0123456789",11,0 设置路由
+ 247   1              {
+ 248   2                      SBUF=SZLY[i];Delay1(5);
+ 249   2              }
+ 250   1              Delay2(3000);
+ 251   1              for(i=0;i<8;i++)//AT+RST 重启
+ 252   1              {
+ 253   2                      SBUF=RST[i];Delay1(5);
+ 254   2              }
+ 255   1              Delay2(5000);
+ 256   1              for(i=0;i<13;i++)//AT+CIPMUX=1 设置成多连接
+ 257   1              {
+ 258   2                      SBUF=SZDLJ[i];Delay1(5);
+ 259   2              }
+ 260   1              Delay2(2000);
+ 261   1              for(i=0;i<21;i++)//AT+CIPSERVER=1,5000 开启TCP服务端口
+ 262   1              {
+ 263   2                      SBUF=KQFU[i];Delay1(5);
+ 264   2              }
+ 265   1              Delay2(2000);
+ 266   1              Get_temp();
+ 267   1              Delay3(50000);
+ 268   1              Get_temp();
+ 269   1              Delay3(50000);
+ 270   1              while (1)
+ 271   1              {
+ 272   2                      DisplayTemp(Get_temp());//刷新18B20
+ 273   2                      if(K1==0)
+ 274   2                      {
+ 275   3                              Delay1(5);
+ 276   3                              if(K1==0)
+ 277   3                              {
+ 278   4                                      LED1=!LED1;
+ 279   4                              }
+ 280   3                              while(K1==0);
+ 281   3                      }
+ 282   2                      if(K2==0)
+ 283   2                      {
+ 284   3                              Delay1(5);
+ 285   3                              if(K2==0)
+ 286   3                              {
+ 287   4                                      LED2=!LED2;
+ 288   4                              }
+ 289   3                              while(K2==0);
+ 290   3                      }
+ 291   2                      if(K3==0)
+ 292   2                      {
+ 293   3                              Delay1(5);
+ 294   3                              if(K3==0)
+ 295   3                              {
+ 296   4                                      LED3=!LED3;
+ 297   4                              }
+ 298   3                              while(K3==0);
+ 299   3                      }
+ 300   2              }
+ 301   1      }
+ 302          
+ 303          /********************* UART1中断函数************************/
+C51 COMPILER V9.00   TESTER                                                                04/22/2015 15:57:44 PAGE 6   
+
+ 304          void UART1_int (void) interrupt UART1_VECTOR
+ 305          {
+ 306   1              char i,a,b,c;
+ 307   1              if(RI)
+ 308   1              {
+ 309   2                      RI = 0;
+ 310   2                      RX1_Buffer[RX1_Cnt] = SBUF;             //保存一个字节
+ 311   2                      if(RX1_Buffer[0]==0x45)
+ 312   2                      {
+ 313   3                              RX1_Cnt++;
+ 314   3                      }
+ 315   2                      else
+ 316   2                      {
+ 317   3                              RX1_Cnt=0;
+ 318   3                      }
+ 319   2                      if(RX1_Cnt>=10)
+ 320   2                      {
+ 321   3                              if(RX1_Buffer[0]==0x45&&RX1_Buffer[1]==0x53&&RX1_Buffer[2]==0x50)
+ 322   3                              {
+ 323   4                                      if(RX1_Buffer[4]==0x4C&&RX1_Buffer[5]==0x45&&RX1_Buffer[6]==0x44)//判断LED
+ 324   4                                      {
+ 325   5                                              if(RX1_Buffer[7]==0x31)//判断LED1
+ 326   5                                              {
+ 327   6                                                      if(RX1_Buffer[3]==0x4B)//判断开
+ 328   6                                                      {
+ 329   7                                                              LED1=0;
+ 330   7                                                      }
+ 331   6                                                      if(RX1_Buffer[3]==0x47)//判断关
+ 332   6                                                      {
+ 333   7                                                              LED1=1;
+ 334   7                                                      }
+ 335   6                                              }
+ 336   5                                              if(RX1_Buffer[7]==0x32)//判断LED2
+ 337   5                                              {
+ 338   6                                                      if(RX1_Buffer[3]==0x4B)//判断开
+ 339   6                                                      {
+ 340   7                                                              LED2=0;
+ 341   7                                                      }
+ 342   6                                                      if(RX1_Buffer[3]==0x47)//判断关
+ 343   6                                                      {
+ 344   7                                                              LED2=1;
+ 345   7                                                      }
+ 346   6                                              }
+ 347   5                                              if(RX1_Buffer[7]==0x33)//判断LED3
+ 348   5                                              {
+ 349   6                                                      if(RX1_Buffer[3]==0x4B)//判断开
+ 350   6                                                      {
+ 351   7                                                              LED3=0;
+ 352   7                                                      }
+ 353   6                                                      if(RX1_Buffer[3]==0x47)//判断关
+ 354   6                                                      {
+ 355   7                                                              LED3=1;
+ 356   7                                                      }
+ 357   6                                              }
+ 358   5                                      }
+ 359   4                                      if(RX1_Buffer[4]==0x4A&&RX1_Buffer[5]==0x44&&RX1_Buffer[6]==0x51)//判断继电器
+ 360   4                                      {
+ 361   5                                              if(RX1_Buffer[7]==0x31)//判断LED1
+ 362   5                                              {
+ 363   6                                                      if(RX1_Buffer[3]==0x4B)//判断开
+ 364   6                                                      {
+ 365   7                                                              DK1=1;
+C51 COMPILER V9.00   TESTER                                                                04/22/2015 15:57:44 PAGE 7   
+
+ 366   7                                                      }
+ 367   6                                                      if(RX1_Buffer[3]==0x47)//判断关
+ 368   6                                                      {
+ 369   7                                                              DK1=0;
+ 370   7                                                      }
+ 371   6                                              }
+ 372   5                                      }
+ 373   4                                      if(RX1_Buffer[3]==0x46&&RX1_Buffer[4]==0x4D&&RX1_Buffer[5]==0x51&&RX1_Buffer[6]==0x43&&RX1_Buffer[7]==
+             -0x53)//判断蜂鸣器
+ 374   4                                      {
+ 375   5                                              BEEP=1;Delay2(100);BEEP=0;Delay2(100);BEEP=1;Delay2(100);BEEP=0;Delay2(100);
+ 376   5                                      }
+ 377   4                                      if(RX1_Buffer[3]==0x43&&RX1_Buffer[4]==0x58&&RX1_Buffer[5]==0x53&&RX1_Buffer[6]==0x4A)//查询数据
+ 378   4                                      {
+ 379   5                                              if(LED1==0){a=0x4B;}else{a=0x47;}
+ 380   5                                              if(LED2==0){b=0x4B;}else{b=0x47;}
+ 381   5                                              if(LED3==0){c=0x4B;}else{c=0x47;}
+ 382   5                                              for(i=0;i<11;i++)//AT+CIPSEND= 发送数据
+ 383   5                                              {
+ 384   6                                                      SBUF=FSSJ[i];Delay1(5);
+ 385   6                                              }
+ 386   5                                              SBUF=0x30;Delay1(5);
+ 387   5                                              SBUF=0x2C;Delay1(5);
+ 388   5                                              SBUF=0x32;Delay1(5);
+ 389   5                                              SBUF=0x36;Delay1(5);
+ 390   5                                              SBUF=0x0D;Delay1(5);
+ 391   5                                              SBUF=0x0A;Delay1(5);
+ 392   5                                              
+ 393   5                                              SBUF=0x45;Delay1(5);
+ 394   5                                              SBUF=0x53;Delay1(5);
+ 395   5                                              SBUF=0x50;Delay1(5);
+ 396   5                                              SBUF=0x4C;Delay1(5);
+ 397   5                                              SBUF=0x45;Delay1(5);
+ 398   5                                              SBUF=0x44;Delay1(5);
+ 399   5                                              SBUF=0x31;Delay1(5);
+ 400   5                                              SBUF=a;Delay1(5);
+ 401   5                                              SBUF=0x4C;Delay1(5);
+ 402   5                                              SBUF=0x45;Delay1(5);
+ 403   5                                              SBUF=0x44;Delay1(5);
+ 404   5                                              SBUF=0x32;Delay1(5);
+ 405   5                                              SBUF=b;Delay1(5);
+ 406   5                                              SBUF=0x4C;Delay1(5);
+ 407   5                                              SBUF=0x45;Delay1(5);
+ 408   5                                              SBUF=0x44;Delay1(5);
+ 409   5                                              SBUF=0x33;Delay1(5);
+ 410   5                                              SBUF=c;Delay1(5);
+ 411   5                                              SBUF=WDSJ[0];Delay1(5);
+ 412   5                                              SBUF=WDSJ[1];Delay1(5);
+ 413   5                                              SBUF=WDSJ[2];Delay1(5);
+ 414   5                                              SBUF=WDSJ[3];Delay1(5);
+ 415   5                                              SBUF=0x50;Delay1(5);
+ 416   5                                              SBUF=0x53;Delay1(5);
+ 417   5                                              SBUF=0x45;Delay1(5);
+ 418   5                                              SBUF=0x0A;Delay1(5);
+ 419   5                                              //SBUF=0x0A;Delay1(5);
+ 420   5                                              //45 53 50 4C 45 44 31 4B 4C 45 44 32 4B 4C 45 44 33 4B 50 53 45 
+ 421   5                                      }
+ 422   4                                      RX1_Cnt=0;
+ 423   4                              }
+ 424   3                              else
+ 425   3                              {
+ 426   4                                      RX1_Cnt=0;
+C51 COMPILER V9.00   TESTER                                                                04/22/2015 15:57:44 PAGE 8   
+
+ 427   4                              }
+ 428   3                              RX1_Cnt=0;
+ 429   3                      }
+ 430   2              }
+ 431   1              if(TI)
+ 432   1              {
+ 433   2                      TI = 0;
+ 434   2                      B_TX1_Busy = 0;         //清除发送忙标志
+ 435   2              }
+ 436   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1673    ----
+   CONSTANT SIZE    =      3    ----
+   XDATA SIZE       =    118      28
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =     32    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -9,17 +9,13 @@
 #include "spi.h"
 #include "flash.h"
 #include "touch.h"
-//#include "mmc_sd.h"
 #include "tm1638.h"
 #include "ff.h"
 #include "integer.h"
 #include "diskio.h"
-//#include "text.h"
-//#include "fontupd.h"
 #include "stdio.h"
 #include "string.h"
-//#include "picdecoder.h"
-
+#include "esp8266.h"
 #include "rtc.h" 
 #include "bmp180.h"
 
@@ -52,6 +48,7 @@ extern const unsigned char gImage_1[38400];
 extern const unsigned char gImage_2[38400];
 extern const unsigned char gImage_3[38400];
 extern const unsigned char gImage_4[38400];
+extern uint8_t message[10];
 
 
 void Load_Drow_Dialog(void)
@@ -75,23 +72,24 @@ int main(void)
 	delay_init(72);	     //延时初始化
 	NVIC_Configuration();
 	
-	uart_init1(115200);
-	uart_init2(9600);
+	uart_init1(9600);	//ZIGBEE:115200 / WIFI:9600
+	uart_init2(9600);		//mp3
 	USART2_Send("UART2_OK",8);
 	USART1_Send("UART1_OK",8);
 	
  	LED_Init();
 	LCD_Init();
-	Buzzer_Init();
 
 	init_TM1638();
 	AT24CXX_Init();		//IIC初始化
 	SPI_Flash_Init();   //SPI FLASH 初始化 
-	//f_mount(0, &fs); //初始化必须mount
 	POINT_COLOR=RED;
-  
-	//LCD_ShowString(70,50,"SY-HMI-3.0TP");	 
-  
+	
+//#ifdef ESP8266
+	ESP8266_init();
+	//ESP8266_Send("TEST!!", 6);
+//#endif
+//#ifndef ESP8266  
 	//SPI_Flash_Write((u8 *)gImage_1, 0, 38400);	
 	//SPI_Flash_Write((u8 *)gImage_2, 38400, 38400);		
 	//SPI_Flash_Write((u8 *)gImage_3, 38400 * 2, 38400);	
@@ -188,7 +186,6 @@ int main(void)
 										break;
 									case 0x05:
 										//beep_off
-										GPIO_ResetBits(GPIOC,GPIO_Pin_13);
 									  //close mp3
 										break;
 									case 0x06:
@@ -203,9 +200,19 @@ int main(void)
 								}							
 							}						
 						}
-						t_kdat=keyDat;		
+						else
+							if(g_flag1 == 1)	//接收到节点数据
+							{
+								g_flag1 = 0;
+								LCD_Fill(10,120,120,175,RED);  LCD_Fill(120,120,230,175,RED);
+								LCD_Fill(10,175,120,230,RED);  LCD_Fill(120,175,230,230,RED);								
+							}
+						//t_kdat=keyDat;	
+
+											
 			}
 		bmp180Convert();
 		DATA_Diplay();			
 	}
+//#endif
 }

@@ -1,0 +1,55 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+C:\Users\Administrator\Desktop\安信可官方指导文件\安信可测试版使用说明\软件\测试版单片机程序\tester.uvproj
+Project File Date:  04/22/2015
+
+<h2>Output:</h2>
+Build target 'trster'
+compiling tester.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_UARTSENDBYTE?TESTER
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?_DELAY2?TESTER
+    CALLER1: ?PR?UART1_INT?TESTER
+    CALLER2: ?C_C51STARTUP
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?_DELAY1?TESTER
+    CALLER1: ?PR?UART1_INT?TESTER
+    CALLER2: ?C_C51STARTUP
+Program Size: data=41.1 xdata=139 code=2461
+"tester" - 0 Error(s), 3 Warning(s).
+Build target 'trster'
+compiling tester.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_UARTSENDBYTE?TESTER
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?_DELAY2?TESTER
+    CALLER1: ?PR?UART1_INT?TESTER
+    CALLER2: ?C_C51STARTUP
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?_DELAY1?TESTER
+    CALLER1: ?PR?UART1_INT?TESTER
+    CALLER2: ?C_C51STARTUP
+Program Size: data=41.1 xdata=139 code=2461
+creating hex file from "ESP115200BAUD"...
+"ESP115200BAUD" - 0 Error(s), 3 Warning(s).
+Build target 'trster'
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_UARTSENDBYTE?TESTER
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?_DELAY2?TESTER
+    CALLER1: ?PR?UART1_INT?TESTER
+    CALLER2: ?C_C51STARTUP
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?_DELAY1?TESTER
+    CALLER1: ?PR?UART1_INT?TESTER
+    CALLER2: ?C_C51STARTUP
+Program Size: data=41.1 xdata=139 code=2461
+creating hex file from "ESP115200BAUD"...
+"ESP115200BAUD" - 0 Error(s), 3 Warning(s).

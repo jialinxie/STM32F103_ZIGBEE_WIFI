@@ -47,4 +47,5 @@
 .\main.o: ..\FATFS\src\ffconf.h
 .\main.o: ..\FATFS\src\diskio.h
 .\main.o: F:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\main.o: ..\HARDWARE\WIFI\esp8266.h
 .\main.o: ..\HARDWARE\TempPre\bmp180.h
