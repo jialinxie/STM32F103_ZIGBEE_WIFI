@@ -43,7 +43,10 @@ u8 mode_u[4]  = {0x7E, 0x02, 0, 0xEF};			//U盘
 u8 mode_tf[4] = {0x7E, 0x02, 0x01, 0xEF};   //TF
 u8 mode_flash[4] = {0x7E, 0x02, 0x04, 0xEF};//flash
 u8 num[4] = {0x7E, 0x02, 0x48, 0xEF};				//ask song num from U pan
-u8 point_num[6] = {0x7E, 0x04, 0x03, 0x00, 0x02, 0xEF};
+u8 point_fire[6] = {0x7E, 0x04, 0x03, 0x00, 0x01, 0xEF};		//fire
+u8 point_rain[6] = {0x7E, 0x04, 0x03, 0x00, 0x02, 0xEF};		//rain
+u8 point_metal[6] = {0x7E, 0x04, 0x03, 0x00, 0x03, 0xEF};		//metal
+u8 point_vibration[6] = {0x7E, 0x04, 0x03, 0x00, 0x04, 0xEF};		//vibration	
 
 extern const unsigned char gImage_1[38400];
 extern const unsigned char gImage_2[38400];
@@ -79,6 +82,7 @@ int main(void)
 	
  	LED_Init();
 	LCD_Init();
+	Buzzer_Init();
 
 	init_TM1638();
 	AT24CXX_Init();		//IIC初始化
@@ -108,13 +112,8 @@ int main(void)
 	LCD_DrawRectangle(10,175,120,230, BLACK); LCD_DrawRectangle(120,175,230,230, BLACK);
 
 	delay_ms(1000);	
+	//USART2_Send(mode_tf,4);
 	
-	USART2_Send(mode_tf,4);	
-	delay_ms(3000);	
-	USART2_Send(point_num,4);	
-	//delay_ms(3000);	
-	
-	//USART2_Send(play,4);	
 	BMP180_Test();			 			    	 
 	
 	POINT_COLOR=RED;
@@ -156,31 +155,40 @@ int main(void)
 								{
 									case 0x01:		//rain warning
 										//beep_on
+										USART2_Send(point_rain, 6);
+										GPIO_SetBits(GPIOC,GPIO_Pin_13);
 										LCD_Fill(10,120,120,175,RED);
 										LCD_ShowString(25, 130, "雨滴传感器", WHITE, RED);
 										LCD_ShowString(48, 150, "报警", WHITE, RED);												
-										//USART2_Send(S1_Wave,6);		//mp3 
+	
 										break;
 									case 0x02:
 										//beep_on
+										USART2_Send(point_vibration, 6);
+										GPIO_SetBits(GPIOC,GPIO_Pin_13);
 										LCD_Fill(120,120,230,175,RED);				
 										LCD_ShowString(142, 142, "振动报警", WHITE, RED);										
-										//USART2_Send(S3_Wave,6);
+
 										break;
 									case 0x03:
 										//beep_on
+									  USART2_Send(point_fire,6);
+										GPIO_SetBits(GPIOC,GPIO_Pin_13);
 										LCD_Fill(10,175,120,230,RED);
 										LCD_ShowString(30, 195, "火灾报警", WHITE, RED);								
-										//USART2_Send(Mp3_Stop,4);
+
 										break;
 									case 0x04:
 										//beep_on
+										USART2_Send(point_metal,6);			
+										GPIO_SetBits(GPIOC,GPIO_Pin_13);									
 										LCD_Fill(120,175,230,230,RED);
 										LCD_ShowString(142, 195, "金属报警", WHITE, RED);										
-										//USART2_Send(S5_Wave,6);
+
 										break;
 									case 0x05:
 										//beep_off
+										GPIO_ResetBits(GPIOC,GPIO_Pin_13);
 									  //close mp3
 										break;
 									case 0x06:
