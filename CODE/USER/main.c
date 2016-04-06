@@ -72,10 +72,10 @@ int main(void)
 	delay_init(72);	     //—” ±≥ı ºªØ
 	NVIC_Configuration();
 	
-	uart_init1(9600);	//ZIGBEE:115200 / WIFI:9600
+	uart_init1(115200);	//ZIGBEE:115200 / WIFI:115200
 	uart_init2(9600);		//mp3
-	USART2_Send("UART2_OK",8);
-	USART1_Send("UART1_OK",8);
+	//USART2_Send("UART2_OK",8);
+	//USART1_Send("UART1_OK",8);
 	
  	LED_Init();
 	LCD_Init();

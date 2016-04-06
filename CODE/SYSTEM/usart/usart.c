@@ -189,7 +189,7 @@ void USART1_Send(uint8_t *str,uint8_t num)
 void USART1_IRQHandler(void)                	//串口1中断服务程序
 {
 	uint8_t tmp1;
-	uint8_t i,j;
+	uint8_t i = 0, j = 0;
 	uint16_t tim_dly;
 
 	USART_ClearITPendingBit(USART1,USART_IT_RXNE);
