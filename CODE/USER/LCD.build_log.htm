@@ -26,18 +26,66 @@ Project File Date:  04/07/2016
 
 <h2>Output:</h2>
 Build target 'Target 1'
-compiling usart.c...
-..\SYSTEM\usart\usart.c(147): warning:  #9-D: nested comment is not allowed
-        NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;              //子优先级3/*/
-..\SYSTEM\usart\usart.c(193): warning:  #177-D: variable "tmp1" was declared but never referenced
-        uint8_t tmp1;
-..\SYSTEM\usart\usart.c(194): warning:  #177-D: variable "j" was declared but never referenced
-        uint8_t i = 0, j = 0;
-..\SYSTEM\usart\usart.c: 3 warnings, 0 errors
+compiling main.c...
+..\HARDWARE\WIFI\esp8266.h(10): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\TempPre\bmp180.h(20): warning:  #47-D: incompatible redefinition of macro "bool" (declared at line 15 of "F:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h")
+  #define bool BOOL
+..\HARDWARE\TempPre\bmp180.h(24): warning:  #1295-D: Deprecated declaration bmp180Convert - give arg types
+  void bmp180Convert();
+..\HARDWARE\TempPre\bmp180.h(27): warning:  #1295-D: Deprecated declaration DATA_Diplay - give arg types
+  void DATA_Diplay();
+..\HARDWARE\TempPre\bmp180.h(30): warning:  #1295-D: Deprecated declaration I2C_Start - give arg types
+  void I2C_Start();
+..\HARDWARE\TempPre\bmp180.h(31): warning:  #1295-D: Deprecated declaration I2C_Stop - give arg types
+  void I2C_Stop();
+..\HARDWARE\TempPre\bmp180.h(33): warning:  #1295-D: Deprecated declaration I2C_RecvACK - give arg types
+  char I2C_RecvACK();
+..\HARDWARE\TempPre\bmp180.h(42): warning:  #1-D: last line of file ends without a newline
+  #endif
+main.c(22): warning:  #188-D: enumerated type mixed with another type
+  bool DisableWarning = false;
+main.c(60): warning:  #223-D: function "LCD_ShowString" declared implicitly
+        LCD_ShowString(216,0,"RST");//显示清屏区域
+main.c(68): warning:  #223-D: function "LCD_ShowString" declared implicitly
+                LCD_ShowString(25, 130, "雨滴传感器", WHITE, RED);
+main.c(78): warning:  #223-D: function "LCD_ShowString" declared implicitly
+                LCD_ShowString(142, 142, "振动报警", WHITE, RED);       
+main.c(87): warning:  #223-D: function "LCD_ShowString" declared implicitly
+                LCD_ShowString(30, 195, "火灾报警", WHITE, RED);
+main.c(96): warning:  #223-D: function "LCD_ShowString" declared implicitly
+                LCD_ShowString(142, 195, "金属报警", WHITE, RED);       
+main.c(140): warning:  #223-D: function "LCD_ShowPic" declared implicitly
+        LCD_ShowPic();
+main.c(155): warning:  #223-D: function "BMP180_Test" declared implicitly
+        BMP180_Test();                                                   
+main.c(160): warning:  #223-D: function "LCD_ShowString" declared implicitly
+        LCD_ShowString(25, 130, "雨滴传感器", BLACK, GREEN);
+main.c(215): warning:  #188-D: enumerated type mixed with another type
+                                                                        DisableWarning = true;
+main.c(218): warning:  #188-D: enumerated type mixed with another type
+                                                                        DisableWarning = false;
+main.c(223): warning:  #127-D: expected a statement
+                                                        }                                                       
+main.c(105): warning:  #177-D: variable "i" was declared but never referenced
+        u8 i,j;
+main.c(105): warning:  #177-D: variable "j" was declared but never referenced
+        u8 i,j;
+main.c(106): warning:  #177-D: variable "fs" was declared but never referenced
+        FATFS fs;
+main.c(107): warning:  #177-D: variable "key" was declared but never referenced
+        u8 key;
+main.c(109): warning:  #177-D: variable "tmp_fcs" was declared but never referenced
+        u8 tmp_fcs=0,tmp_len,tmp, keyDat ,t_kdat ,temp_keydat;
+main.c(109): warning:  #177-D: variable "tmp_len" was declared but never referenced
+        u8 tmp_fcs=0,tmp_len,tmp, keyDat ,t_kdat ,temp_keydat;
+main.c(109): warning:  #177-D: variable "tmp" was declared but never referenced
+        u8 tmp_fcs=0,tmp_len,tmp, keyDat ,t_kdat ,temp_keydat;
+main.c: 27 warnings, 0 errors
 linking...
-Program Size: Code=29578 RO-data=70070 RW-data=364 ZI-data=6036  
+Program Size: Code=29602 RO-data=70070 RW-data=364 ZI-data=6036  
 FromELF: creating hex file...
-".\LCD.axf" - 0 Error(s), 3 Warning(s).
+".\LCD.axf" - 0 Error(s), 27 Warning(s).
 </pre>
 </body>
 </html>

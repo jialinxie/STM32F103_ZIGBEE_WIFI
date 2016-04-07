@@ -105,7 +105,7 @@ int main(void)
 	u8 i,j;
 	FATFS fs;
 	u8 key;
-	u8 t=0;	
+	u8 t = 200;	
 	u8 tmp_fcs=0,tmp_len,tmp, keyDat ,t_kdat ,temp_keydat;
 	
 	SystemInit();
@@ -167,13 +167,15 @@ int main(void)
 	
 	while(1)
 	{	
+		
+			t=200;
+			while(t--)//延时,同时扫描按键
+			{
+				
 				if(CONNECT_flag == true)	//wifi已连接
 						LCD_ShowString(50,245,"   WIFI Connected   ", BLACK, WHITE);
 				else 
-						LCD_ShowString(50,245,"WIFI Connecting.....", BLACK, WHITE);		
-			//t=200;
-			//while(t--)//延时,同时扫描按键
-			//{
+						LCD_ShowString(50,245,"WIFI Connecting.....", BLACK, WHITE);				
 
 				#if 1
 				keyDat=Read_key();
@@ -242,11 +244,14 @@ int main(void)
 								}						
 							}
 							#endif
-					//	else
-
 							//t_kdat=keyDat;	
+			//t--;
+			//if(t == 1){
+			//	t = 200;
+
 			//}
-		//bmp180Convert();
-		//DATA_Diplay();			
+			}	
+			bmp180Convert();
+			DATA_Diplay();
 	}
 }
