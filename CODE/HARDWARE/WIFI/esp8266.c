@@ -1,4 +1,7 @@
 #include "esp8266.h"
+#include "stdbool.h"
+
+extern  bool OK_flag;
 
 uint8_t cmd_AT[]={'A','T',0x0D,0x0A};																								//"AT"		"OK"
 uint8_t cmd_AT_CWMODE[] = {'A','T','+','C','W','M','O','D','E','=','3',0x0D,0x0A};	//AT+CWMODE=3
@@ -19,13 +22,15 @@ int ESP8266_init(void)
 	
 	Delay(8000000);
 	//USART1_printf(USART1, cmd);	
+	OK_flag = false;
 	for(i = 0; i < 4; i++)
 	{
 		USART_SendData(USART1, cmd_AT[i]);
 		Delay(5000);				
 	}
-	
-		Delay(8000000);
+	while(!OK_flag);		//wait ok
+	OK_flag = false;
+	//Delay(8000000);
 	
 	for(i = 0; i < 13; i++)
 	{
@@ -33,7 +38,9 @@ int ESP8266_init(void)
 		Delay(7000);				
 	}
 	
-	Delay(8000000);
+	while(!OK_flag);		//wait ok
+	OK_flag = false;
+	//Delay(8000000);
 	
 	for(i = 0; i < 13; i++)
 	{
@@ -48,6 +55,10 @@ int ESP8266_init(void)
 		USART_SendData(USART1, cmd_CIPSERVER[i]);
 		Delay(7000);				
 	}
+	
+	while(!OK_flag);		//wait ok
+	OK_flag = false;
+	//Delay(8000000);
 }
 
 int ESP8266_Send(uint8_t *p, uint8_t length)

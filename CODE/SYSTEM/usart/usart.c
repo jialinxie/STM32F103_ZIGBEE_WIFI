@@ -1,5 +1,6 @@
 #include "sys.h"
-#include "usart.h"	  
+#include "usart.h"	 
+
 
  //qinyx write
  uint8_t BufferA[20];
@@ -9,6 +10,7 @@
  uint8_t DBufferFlag1=0,DBufferFlag2=0;
  
  uint8_t message[10] = {0};
+ bool OK_flag = false;
 
 //////////////////////////////////////////////////////////////////
 //加入以下代码,支持printf函数,而不需要选择use MicroLIB	  
@@ -185,16 +187,17 @@ void USART1_Send(uint8_t *str,uint8_t num)
 	}
 }
 
-
 void USART1_IRQHandler(void)                	//串口1中断服务程序
 {
 	uint8_t tmp1;
 	uint8_t i = 0, j = 0;
 	uint16_t tim_dly;
+	uint8_t sum = 0;
 
 	USART_ClearITPendingBit(USART1,USART_IT_RXNE);
 	message[0] = USART1->DR & (uint16_t)0x01FF;
-	if(message[0] == 0xFE)//等待帧头
+	
+	if(message[0] == 'O')
 	{
 				tim_dly=0xffff;
 				while(!USART_GetITStatus(USART1,USART_IT_RXNE))
@@ -207,27 +210,56 @@ void USART1_IRQHandler(void)                	//串口1中断服务程序
 					else tim_dly--;		
 				}//等待下一个字符的到来
 				USART_ClearITPendingBit(USART1,USART_IT_RXNE);
-				message[1] = USART1->DR & (uint16_t)0x01FF;
-				if(message[1] == 0x0F)//等待帧头
-				{				
-						for(i = 2; i < 10; i++)
-						{  
-							tim_dly=0xffff;
-							while(!USART_GetITStatus(USART1,USART_IT_RXNE))
-							{
-								if(tim_dly==0)
-								{
-									g_flag1=0;
-									return ;
-								}
-								else tim_dly--;			
-							}//等待下一个字符的到来
-							USART_ClearITPendingBit(USART1,USART_IT_RXNE);
-							message[i++]=USART1->DR & (uint16_t)0x01FF;
+				message[1] = USART1->DR & (uint16_t)0x01FF;	
+				if(message[1] == 'K')
+					OK_flag = true;
+				else
+					OK_flag = false;
+	}
+	else
+		if(message[0] == 0xFE)//等待帧头
+		{
+					tim_dly=0xffff;
+					while(!USART_GetITStatus(USART1,USART_IT_RXNE))
+					{
+						if(tim_dly==0)
+						{
+							g_flag1=0;
+							return ;
 						}
-						g_flag1=1;  //收完一个数据帧命令
-					}
-	} 
+						else tim_dly--;		
+					}//等待下一个字符的到来
+					USART_ClearITPendingBit(USART1,USART_IT_RXNE);
+					message[1] = USART1->DR & (uint16_t)0x01FF;
+					if(message[1] == 0x0F)//等待帧头
+					{							
+							for(i = 2; i < 10; i++)		//receive remain 8 bytes
+							{  
+								tim_dly=0xffff;
+								while(!USART_GetITStatus(USART1,USART_IT_RXNE))
+								{
+									if(tim_dly==0)
+									{
+										g_flag1=0;
+										return ;
+									}
+									else tim_dly--;			
+								}//等待下一个字符的到来
+								USART_ClearITPendingBit(USART1,USART_IT_RXNE);
+								message[i]=USART1->DR & (uint16_t)0x01FF;
+								sum ^= message[i];
+							}					
+							if(sum == 0)	//packet wrong!
+							{
+								g_flag1=0;
+								return ;
+							}
+							else				//prase packet
+							{
+								g_flag1=1;  //收完一个数据帧命令
+							}					
+						}
+		} 
 }
 
 void USART2_Send(uint8_t *str,uint8_t num)

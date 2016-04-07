@@ -19,6 +19,7 @@
 #include "rtc.h" 
 #include "bmp180.h"
 
+bool DisableWarning = false;
 
 const u8 *COMPILED_DATE=__DATE__;//获得编译日期
 const u8 *COMPILED_TIME=__TIME__;//获得编译时间
@@ -49,7 +50,7 @@ extern const unsigned char gImage_2[38400];
 extern const unsigned char gImage_3[38400];
 extern const unsigned char gImage_4[38400];
 extern uint8_t message[10];
-
+extern  bool OK_flag;
 
 void Load_Drow_Dialog(void)
 {
@@ -58,6 +59,36 @@ void Load_Drow_Dialog(void)
 	LCD_ShowString(216,0,"RST");//显示清屏区域
   POINT_COLOR=RED;//设置画笔蓝色 
 }
+
+void rain_warning(void)
+{
+		USART2_Send(point_rain, 6);
+		LCD_Fill(10,120,120,175,RED);
+		LCD_ShowString(25, 130, "雨滴传感器", WHITE, RED);
+		LCD_ShowString(48, 150, "报警", WHITE, RED);
+}
+
+void vibration_warning(void)
+{
+		USART2_Send(point_vibration, 6);
+		LCD_Fill(120,120,230,175,RED);				
+		LCD_ShowString(142, 142, "振动报警", WHITE, RED);		
+}
+
+void fire_warning(void)
+{
+		USART2_Send(point_fire,6);
+		LCD_Fill(10,175,120,230,RED);
+		LCD_ShowString(30, 195, "火灾报警", WHITE, RED);	
+}
+
+void metal_warning(void)
+{
+		USART2_Send(point_metal,6);												
+		LCD_Fill(120,175,230,230,RED);
+		LCD_ShowString(142, 195, "金属报警", WHITE, RED);				
+}
+
 
 
 int main(void)
@@ -131,17 +162,55 @@ int main(void)
 			{										  
 				keyDat=Read_key();
 				if(keyDat!=0x47)
+					{
+						keyDat=keyDat-16;
+						if(t_kdat!=keyDat)
 						{
-							keyDat=keyDat-16;
-							if(t_kdat!=keyDat)
+							temp_keydat=keyDat & 0x0f;
+							Write_DATA(3<<1,tab[temp_keydat]);
+							temp_keydat=(keyDat & 0xf0)>>4;
+							Write_DATA(2<<1,tab[temp_keydat]);	
+							
+							LCD_Fill(10,120,120,175,GREEN);  LCD_Fill(120,120,230,175,GREEN);
+							LCD_Fill(10,175,120,230,GREEN);  LCD_Fill(120,175,230,230,GREEN);								
+							LCD_DrawRectangle(10,120,120,175, BLACK); LCD_DrawRectangle(120,120,230,175, BLACK);
+							LCD_DrawRectangle(10,175,120,230, BLACK); LCD_DrawRectangle(120,175,230,230, BLACK);					
+							LCD_ShowString(25, 130, "雨滴传感器", BLACK, GREEN);
+							LCD_ShowString(48, 150, "报警", BLACK, GREEN);
+							LCD_ShowString(30, 195, "火灾报警", BLACK, GREEN);
+							LCD_ShowString(142, 142, "振动报警", BLACK, GREEN);
+							LCD_ShowString(142, 195, "金属报警", BLACK, GREEN);									
+							switch(keyDat)	
 							{
-								temp_keydat=keyDat & 0x0f;
-								Write_DATA(3<<1,tab[temp_keydat]);
-								temp_keydat=(keyDat & 0xf0)>>4;
-								Write_DATA(2<<1,tab[temp_keydat]);	
-								
+								case 0x01:	if(!DisableWarning)	rain_warning();	//rain warning										
+									break;
+								case 0x02:  if(!DisableWarning) vibration_warning();									
+									break;
+								case 0x03:  if(!DisableWarning) fire_warning();								
+									break;
+								case 0x04:  if(!DisableWarning) metal_warning();											
+									break;
+								case 0x05:
+									//close mp3
+									break;
+								case 0x06:
+									DisableWarning = true;
+									break;
+								case 0x07:
+									DisableWarning = false;
+									break;									
+							 case 0x08:
+									break;
+								 default:
+							}							
+						}						
+				}
+						else
+							if(g_flag1 == 1)	//接收到节点数据
+							{
+								g_flag1 = 0;		
 								LCD_Fill(10,120,120,175,GREEN);  LCD_Fill(120,120,230,175,GREEN);
-								LCD_Fill(10,175,120,230,GREEN);  LCD_Fill(120,175,230,230,GREEN);								
+								LCD_Fill(10,175,120,230,GREEN);  LCD_Fill(120,175,230,230,GREEN);	
 								LCD_DrawRectangle(10,120,120,175, BLACK); LCD_DrawRectangle(120,120,230,175, BLACK);
 								LCD_DrawRectangle(10,175,120,230, BLACK); LCD_DrawRectangle(120,175,230,230, BLACK);					
 								LCD_ShowString(25, 130, "雨滴传感器", BLACK, GREEN);
@@ -149,70 +218,24 @@ int main(void)
 								LCD_ShowString(30, 195, "火灾报警", BLACK, GREEN);
 								LCD_ShowString(142, 142, "振动报警", BLACK, GREEN);
 								LCD_ShowString(142, 195, "金属报警", BLACK, GREEN);									
-								switch(keyDat)	
-								{
-									case 0x01:		//rain warning
-										//beep_on
-										USART2_Send(point_rain, 6);
-										GPIO_SetBits(GPIOC,GPIO_Pin_13);
-										LCD_Fill(10,120,120,175,RED);
-										LCD_ShowString(25, 130, "雨滴传感器", WHITE, RED);
-										LCD_ShowString(48, 150, "报警", WHITE, RED);												
-	
-										break;
-									case 0x02:
-										//beep_on
-										USART2_Send(point_vibration, 6);
-										GPIO_SetBits(GPIOC,GPIO_Pin_13);
-										LCD_Fill(120,120,230,175,RED);				
-										LCD_ShowString(142, 142, "振动报警", WHITE, RED);										
-
-										break;
-									case 0x03:
-										//beep_on
-									  USART2_Send(point_fire,6);
-										GPIO_SetBits(GPIOC,GPIO_Pin_13);
-										LCD_Fill(10,175,120,230,RED);
-										LCD_ShowString(30, 195, "火灾报警", WHITE, RED);								
-
-										break;
-									case 0x04:
-										//beep_on
-										USART2_Send(point_metal,6);			
-										GPIO_SetBits(GPIOC,GPIO_Pin_13);									
-										LCD_Fill(120,175,230,230,RED);
-										LCD_ShowString(142, 195, "金属报警", WHITE, RED);										
-
-										break;
-									case 0x05:
-										//beep_off
-									  //close mp3
-										break;
-									case 0x06:
-										//disable_warning = true;
-										break;
-									case 0x07:
-										//disable_warning = false;
-										break;									
-								 case 0x08:
-										break;
-									 default:
-								}							
-							}						
-						}
-						else
-							if(g_flag1 == 1)	//接收到节点数据
-							{
-								g_flag1 = 0;
-								LCD_Fill(10,120,120,175,RED);  LCD_Fill(120,120,230,175,RED);
-								LCD_Fill(10,175,120,230,RED);  LCD_Fill(120,175,230,230,RED);								
+								if(message[8] == 1 && DisableWarning == false){//warning
+									switch(message[6]){		//node parameter
+										case 01:	rain_warning();
+											break;
+										case 02:	vibration_warning();	
+											break;
+										case 03:	fire_warning();	
+											break;
+										case 04:	metal_warning();	
+											break;
+										default:
+											break;
+									}
+								}						
 							}
 						//t_kdat=keyDat;	
-
-											
 			}
 		bmp180Convert();
 		DATA_Diplay();			
 	}
-//#endif
 }

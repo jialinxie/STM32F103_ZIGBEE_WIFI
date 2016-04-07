@@ -30,3 +30,4 @@
 .\esp8266.o: ..\STM32F10x_FWLib\inc\stm32f10x_wwdg.h
 .\esp8266.o: ..\STM32F10x_FWLib\inc\misc.h
 .\esp8266.o: F:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\esp8266.o: F:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h

@@ -363,7 +363,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_MD,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\HARDWARE\LED;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\STM32F10x_FWLib\inc;..\CORE;..\HARDWARE\TIMER;..\HARDWARE\LCD;..\HARDWARE\FLASH;..\HARDWARE\TOUCH;..\HARDWARE\24CXX;..\HARDWARE\IIC;..\HARDWARE\MMC_SD;..\HARDWARE\SPI;..\HARDWARE\RTC;..\TEXT;..\FATFS\src;..\FATFS\exfuns;..\JPEG;..\USB\CFG;..\USB\CORE;..\HARDWARE\TempPre;..\HARDWARE\TM1638;..\HARDWARE\HZK</IncludePath>
+              <IncludePath>..\HARDWARE\LED;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\STM32F10x_FWLib\inc;..\CORE;..\HARDWARE\TIMER;..\HARDWARE\LCD;..\HARDWARE\FLASH;..\HARDWARE\TOUCH;..\HARDWARE\24CXX;..\HARDWARE\IIC;..\HARDWARE\MMC_SD;..\HARDWARE\SPI;..\HARDWARE\RTC;..\TEXT;..\FATFS\src;..\FATFS\exfuns;..\JPEG;..\USB\CFG;..\USB\CORE;..\HARDWARE\TempPre;..\HARDWARE\TM1638;..\HARDWARE\HZK;..\HARDWARE\WIFI</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -485,6 +485,11 @@
               <FileName>tm1638.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\TM1638\tm1638.c</FilePath>
+            </File>
+            <File>
+              <FileName>esp8266.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\WIFI\esp8266.c</FilePath>
             </File>
           </Files>
         </Group>

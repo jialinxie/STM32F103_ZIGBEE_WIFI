@@ -33,6 +33,7 @@
 .\main.o: ..\SYSTEM\sys\sys.h
 .\main.o: ..\SYSTEM\usart\usart.h
 .\main.o: F:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\main.o: F:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 .\main.o: ..\HARDWARE\LCD\lcd.h
 .\main.o: F:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\main.o: ..\HARDWARE\IIC\myiic.h
