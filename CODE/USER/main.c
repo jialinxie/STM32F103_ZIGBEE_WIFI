@@ -51,6 +51,7 @@ extern const unsigned char gImage_3[38400];
 extern const unsigned char gImage_4[38400];
 extern uint8_t message[10];
 extern  bool OK_flag;
+extern  bool CONNECT_flag;
 
 void Load_Drow_Dialog(void)
 {
@@ -66,27 +67,35 @@ void rain_warning(void)
 		LCD_Fill(10,120,120,175,RED);
 		LCD_ShowString(25, 130, "雨滴传感器", WHITE, RED);
 		LCD_ShowString(48, 150, "报警", WHITE, RED);
+							LCD_DrawRectangle(10,120,120,175, BLACK); LCD_DrawRectangle(120,120,230,175, BLACK);
+							LCD_DrawRectangle(10,175,120,230, BLACK); LCD_DrawRectangle(120,175,230,230, BLACK);		
 }
 
 void vibration_warning(void)
 {
 		USART2_Send(point_vibration, 6);
 		LCD_Fill(120,120,230,175,RED);				
-		LCD_ShowString(142, 142, "振动报警", WHITE, RED);		
+		LCD_ShowString(142, 142, "振动报警", WHITE, RED);	
+							LCD_DrawRectangle(10,120,120,175, BLACK); LCD_DrawRectangle(120,120,230,175, BLACK);
+							LCD_DrawRectangle(10,175,120,230, BLACK); LCD_DrawRectangle(120,175,230,230, BLACK);		
 }
 
 void fire_warning(void)
 {
 		USART2_Send(point_fire,6);
 		LCD_Fill(10,175,120,230,RED);
-		LCD_ShowString(30, 195, "火灾报警", WHITE, RED);	
+		LCD_ShowString(30, 195, "火灾报警", WHITE, RED);
+							LCD_DrawRectangle(10,120,120,175, BLACK); LCD_DrawRectangle(120,120,230,175, BLACK);
+							LCD_DrawRectangle(10,175,120,230, BLACK); LCD_DrawRectangle(120,175,230,230, BLACK);		
 }
 
 void metal_warning(void)
 {
 		USART2_Send(point_metal,6);												
 		LCD_Fill(120,175,230,230,RED);
-		LCD_ShowString(142, 195, "金属报警", WHITE, RED);				
+		LCD_ShowString(142, 195, "金属报警", WHITE, RED);	
+							LCD_DrawRectangle(10,120,120,175, BLACK); LCD_DrawRectangle(120,120,230,175, BLACK);
+							LCD_DrawRectangle(10,175,120,230, BLACK); LCD_DrawRectangle(120,175,230,230, BLACK);		
 }
 
 
@@ -153,13 +162,20 @@ int main(void)
 	LCD_ShowString(30, 195, "火灾报警", BLACK, GREEN);
 	LCD_ShowString(142, 142, "振动报警", BLACK, GREEN);
 	LCD_ShowString(142, 195, "金属报警", BLACK, GREEN);	
-  LCD_ShowString(50,245,"Zigbee Connecting.....", BLACK, WHITE);
+  //LCD_ShowString(50,245,"Zigbee Connecting.....", BLACK, WHITE);
+	LCD_ShowString(50,245,"WIFI Connecting.....", BLACK, WHITE);
 	
 	while(1)
-	{		
-			t=200;
-			while(t--)//延时,同时扫描按键
-			{										  
+	{	
+				if(CONNECT_flag == true)	//wifi已连接
+						LCD_ShowString(50,245,"   WIFI Connected   ", BLACK, WHITE);
+				else 
+						LCD_ShowString(50,245,"WIFI Connecting.....", BLACK, WHITE);		
+			//t=200;
+			//while(t--)//延时,同时扫描按键
+			//{
+
+				#if 1
 				keyDat=Read_key();
 				if(keyDat!=0x47)
 					{
@@ -169,17 +185,8 @@ int main(void)
 							temp_keydat=keyDat & 0x0f;
 							Write_DATA(3<<1,tab[temp_keydat]);
 							temp_keydat=(keyDat & 0xf0)>>4;
-							Write_DATA(2<<1,tab[temp_keydat]);	
-							
-							LCD_Fill(10,120,120,175,GREEN);  LCD_Fill(120,120,230,175,GREEN);
-							LCD_Fill(10,175,120,230,GREEN);  LCD_Fill(120,175,230,230,GREEN);								
-							LCD_DrawRectangle(10,120,120,175, BLACK); LCD_DrawRectangle(120,120,230,175, BLACK);
-							LCD_DrawRectangle(10,175,120,230, BLACK); LCD_DrawRectangle(120,175,230,230, BLACK);					
-							LCD_ShowString(25, 130, "雨滴传感器", BLACK, GREEN);
-							LCD_ShowString(48, 150, "报警", BLACK, GREEN);
-							LCD_ShowString(30, 195, "火灾报警", BLACK, GREEN);
-							LCD_ShowString(142, 142, "振动报警", BLACK, GREEN);
-							LCD_ShowString(142, 195, "金属报警", BLACK, GREEN);									
+							Write_DATA(2<<1,tab[temp_keydat]);							
+												
 							switch(keyDat)	
 							{
 								case 0x01:	if(!DisableWarning)	rain_warning();	//rain warning										
@@ -191,6 +198,15 @@ int main(void)
 								case 0x04:  if(!DisableWarning) metal_warning();											
 									break;
 								case 0x05:
+										LCD_Fill(10,120,120,175,GREEN);  LCD_Fill(120,120,230,175,GREEN);
+										LCD_Fill(10,175,120,230,GREEN);  LCD_Fill(120,175,230,230,GREEN);	
+										LCD_DrawRectangle(10,120,120,175, BLACK); LCD_DrawRectangle(120,120,230,175, BLACK);
+										LCD_DrawRectangle(10,175,120,230, BLACK); LCD_DrawRectangle(120,175,230,230, BLACK);					
+										LCD_ShowString(25, 130, "雨滴传感器", BLACK, GREEN);
+										LCD_ShowString(48, 150, "报警", BLACK, GREEN);
+										LCD_ShowString(30, 195, "火灾报警", BLACK, GREEN);
+										LCD_ShowString(142, 142, "振动报警", BLACK, GREEN);
+										LCD_ShowString(142, 195, "金属报警", BLACK, GREEN);									
 									//close mp3
 									break;
 								case 0x06:
@@ -205,19 +221,11 @@ int main(void)
 							}							
 						}						
 				}
+
 						else
 							if(g_flag1 == 1)	//接收到节点数据
-							{
-								g_flag1 = 0;		
-								LCD_Fill(10,120,120,175,GREEN);  LCD_Fill(120,120,230,175,GREEN);
-								LCD_Fill(10,175,120,230,GREEN);  LCD_Fill(120,175,230,230,GREEN);	
-								LCD_DrawRectangle(10,120,120,175, BLACK); LCD_DrawRectangle(120,120,230,175, BLACK);
-								LCD_DrawRectangle(10,175,120,230, BLACK); LCD_DrawRectangle(120,175,230,230, BLACK);					
-								LCD_ShowString(25, 130, "雨滴传感器", BLACK, GREEN);
-								LCD_ShowString(48, 150, "报警", BLACK, GREEN);
-								LCD_ShowString(30, 195, "火灾报警", BLACK, GREEN);
-								LCD_ShowString(142, 142, "振动报警", BLACK, GREEN);
-								LCD_ShowString(142, 195, "金属报警", BLACK, GREEN);									
+							{															
+								g_flag1 = 0;										
 								if(message[8] == 1 && DisableWarning == false){//warning
 									switch(message[6]){		//node parameter
 										case 01:	rain_warning();
@@ -233,9 +241,12 @@ int main(void)
 									}
 								}						
 							}
-						//t_kdat=keyDat;	
-			}
-		bmp180Convert();
-		DATA_Diplay();			
+							#endif
+					//	else
+
+							//t_kdat=keyDat;	
+			//}
+		//bmp180Convert();
+		//DATA_Diplay();			
 	}
 }

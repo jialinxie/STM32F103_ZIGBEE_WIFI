@@ -11,6 +11,7 @@
  
  uint8_t message[10] = {0};
  bool OK_flag = false;
+ bool CONNECT_flag = false;
 
 //////////////////////////////////////////////////////////////////
 //加入以下代码,支持printf函数,而不需要选择use MicroLIB	  
@@ -260,6 +261,27 @@ void USART1_IRQHandler(void)                	//串口1中断服务程序
 							}					
 						}
 		} 
+	else
+		if(message[0] == 'C')
+		{
+					tim_dly=0xffff;
+					while(!USART_GetITStatus(USART1,USART_IT_RXNE))
+					{
+						if(tim_dly==0)
+						{
+							g_flag1=0;
+							return ;
+						}
+						else tim_dly--;		
+					}//等待下一个字符的到来
+					USART_ClearITPendingBit(USART1,USART_IT_RXNE);
+					message[1] = USART1->DR & (uint16_t)0x01FF;	
+					if(message[1] == 'O')			//connect
+						CONNECT_flag = true;
+					else
+						if(message[1] == 'L')		//close
+							CONNECT_flag = false;
+		}		
 }
 
 void USART2_Send(uint8_t *str,uint8_t num)
