@@ -45,6 +45,15 @@ u8 point_rain[6] = {0x7E, 0x04, 0x03, 0x00, 0x02, 0xEF};		//rain
 u8 point_metal[6] = {0x7E, 0x04, 0x03, 0x00, 0x03, 0xEF};		//metal
 u8 point_vibration[6] = {0x7E, 0x04, 0x03, 0x00, 0x04, 0xEF};		//vibration	
 
+//定义ZIGBEE指令
+u8 AskAdd[21] = {		//ask node's address
+0xFE, 0x0F, 0x29, 0x00 , 0x02 , 0x00 , 0x00 , 0x00 , 0x01 , 0x00 , 0x01 , 0x00 , 0x02 , 0x00 , 0x05 , 0x00 , 0x14 , 0x00 , 0x15 , 0x22 , 0x00
+};
+
+u8 AskStat[14] = {					//AskStat[5:6] = node's address 
+0xFE , 0x09 , 0x29 , 0x00 , 0x02 , 0x79 , 0xE1 , 0x00 , 0x01 , 0x04 , 0x01 , 0x04 , 0x02 , 0xB8
+};																	
+
 extern const unsigned char gImage_1[38400];
 extern const unsigned char gImage_2[38400];
 extern const unsigned char gImage_3[38400];
@@ -52,6 +61,8 @@ extern const unsigned char gImage_4[38400];
 extern uint8_t message[10];
 extern  bool OK_flag;
 extern  bool CONNECT_flag;
+extern  bool NodeAddress;
+extern  bool NodeStat;
 
 void Load_Drow_Dialog(void)
 {
@@ -59,6 +70,39 @@ void Load_Drow_Dialog(void)
  	POINT_COLOR=BLUE;//设置字体为蓝色 
 	LCD_ShowString(216,0,"RST");//显示清屏区域
   POINT_COLOR=RED;//设置画笔蓝色 
+}
+
+void rain_no_warning(void)
+{
+		LCD_Fill(10,120,120,175,GREEN);
+		LCD_ShowString(25, 130, "雨滴传感器", BLACK, GREEN);
+		LCD_ShowString(48, 150, "报警", BLACK, GREEN);
+							LCD_DrawRectangle(10,120,120,175, BLACK); LCD_DrawRectangle(120,120,230,175, BLACK);
+							LCD_DrawRectangle(10,175,120,230, BLACK); LCD_DrawRectangle(120,175,230,230, BLACK);		
+}
+
+void vibration_no_warning(void)
+{
+		LCD_Fill(120,120,230,175,GREEN);				
+		LCD_ShowString(142, 142, "振动报警", BLACK, GREEN);	
+							LCD_DrawRectangle(10,120,120,175, BLACK); LCD_DrawRectangle(120,120,230,175, BLACK);
+							LCD_DrawRectangle(10,175,120,230, BLACK); LCD_DrawRectangle(120,175,230,230, BLACK);		
+}
+
+void fire_no_warning(void)
+{
+		LCD_Fill(10,175,120,230,GREEN);
+		LCD_ShowString(30, 195, "火灾报警", BLACK, GREEN);
+							LCD_DrawRectangle(10,120,120,175, BLACK); LCD_DrawRectangle(120,120,230,175, BLACK);
+							LCD_DrawRectangle(10,175,120,230, BLACK); LCD_DrawRectangle(120,175,230,230, BLACK);		
+}
+
+void metal_no_warning(void)
+{											
+		LCD_Fill(120,175,230,230,GREEN);
+		LCD_ShowString(142, 195, "金属报警", BLACK, GREEN);	
+							LCD_DrawRectangle(10,120,120,175, BLACK); LCD_DrawRectangle(120,120,230,175, BLACK);
+							LCD_DrawRectangle(10,175,120,230, BLACK); LCD_DrawRectangle(120,175,230,230, BLACK);		
 }
 
 void rain_warning(void)
@@ -105,8 +149,9 @@ int main(void)
 	u8 i,j;
 	FATFS fs;
 	u8 key;
-	u8 t = 200;	
+	u8 sum = 0;	
 	u8 tmp_fcs=0,tmp_len,tmp, keyDat ,t_kdat ,temp_keydat;
+	u16 t;
 	
 	SystemInit();
 	delay_init(72);	     //延时初始化
@@ -115,7 +160,7 @@ int main(void)
 	uart_init1(115200);	//ZIGBEE:115200 / WIFI:115200
 	uart_init2(9600);		//mp3
 	//USART2_Send("UART2_OK",8);
-	//USART1_Send("UART1_OK",8);
+	//USART1_Send(AskAdd, 21);
 	
  	LED_Init();
 	LCD_Init();
@@ -125,11 +170,6 @@ int main(void)
 	SPI_Flash_Init();   //SPI FLASH 初始化 
 	POINT_COLOR=RED;
 	
-//#ifdef ESP8266
-	ESP8266_init();
-	//ESP8266_Send("TEST!!", 6);
-//#endif
-//#ifndef ESP8266  
 	//SPI_Flash_Write((u8 *)gImage_1, 0, 38400);	
 	//SPI_Flash_Write((u8 *)gImage_2, 38400, 38400);		
 	//SPI_Flash_Write((u8 *)gImage_3, 38400 * 2, 38400);	
@@ -150,8 +190,7 @@ int main(void)
 	LCD_DrawRectangle(10,175,120,230, BLACK); LCD_DrawRectangle(120,175,230,230, BLACK);
 
 	delay_ms(1000);	
-	//USART2_Send(mode_tf,4);
-	
+
 	BMP180_Test();			 			    	 
 	
 	POINT_COLOR=RED;
@@ -162,22 +201,19 @@ int main(void)
 	LCD_ShowString(30, 195, "火灾报警", BLACK, GREEN);
 	LCD_ShowString(142, 142, "振动报警", BLACK, GREEN);
 	LCD_ShowString(142, 195, "金属报警", BLACK, GREEN);	
-  //LCD_ShowString(50,245,"Zigbee Connecting.....", BLACK, WHITE);
-	LCD_ShowString(50,245,"WIFI Connecting.....", BLACK, WHITE);
+  LCD_ShowString(50,245,"Zigbee Connecting...", BLACK, WHITE);
+	//LCD_ShowString(50,245,"WIFI Connecting.....", BLACK, WHITE);
 	
 	while(1)
 	{	
-		
+			USART1_Send(AskAdd, 21);	//ask node's address		
+#if 1
 			t=200;
-			while(t--)//延时,同时扫描按键
-			{
-				
-				if(CONNECT_flag == true)	//wifi已连接
-						LCD_ShowString(50,245,"   WIFI Connected   ", BLACK, WHITE);
-				else 
-						LCD_ShowString(50,245,"WIFI Connecting.....", BLACK, WHITE);				
 
-				#if 1
+			///while(t--)//延时,同时扫描按键
+			while(t > 2)
+			{				
+				t --;
 				keyDat=Read_key();
 				if(keyDat!=0x47)
 					{
@@ -223,35 +259,52 @@ int main(void)
 							}							
 						}						
 				}
-
-						else
-							if(g_flag1 == 1)	//接收到节点数据
-							{															
-								g_flag1 = 0;										
-								if(message[8] == 1 && DisableWarning == false){//warning
-									switch(message[6]){		//node parameter
-										case 01:	rain_warning();
-											break;
-										case 02:	vibration_warning();	
-											break;
-										case 03:	fire_warning();	
-											break;
-										case 04:	metal_warning();	
-											break;
-										default:
-											break;
-									}
-								}						
-							}
-							#endif
-							//t_kdat=keyDat;	
-			//t--;
-			//if(t == 1){
-			//	t = 200;
-
-			//}
 			}	
-			bmp180Convert();
-			DATA_Diplay();
+#endif
+			if(NodeAddress == true){
+					NodeAddress = false;
+					LCD_ShowString(50,245,"  Zigbee Connected  ", BLACK, WHITE);			
+				//get node's address
+					AskStat[5] = message[39];
+					AskStat[6] = message[40];
+			
+					for(i = 1; i < 13; i++)
+						sum ^= AskStat[i];
+				
+				  AskStat[13] = sum;
+				  USART1_Send(AskStat, 14);	
+					delay_ms(100);
+			}
+			else
+				LCD_ShowString(50,245,"Zigbee Connecting...", BLACK, WHITE);
+			
+			if(NodeStat == true){
+				NodeStat = false;			
+				if(message[20] == 1){		//warning
+					switch(message[18]){
+						case 04:	rain_warning();
+											break;
+						case 05: vibration_warning();	
+											break;
+						case 06: fire_warning();	
+											break;
+						case 07: metal_warning();	
+											break;
+					}		
+				}else{
+					switch(message[18]){
+						case 04:	rain_no_warning();
+											break;
+						case 05: vibration_no_warning();	
+											break;
+						case 06: fire_no_warning();	
+											break;
+						case 07: metal_no_warning();	
+											break;	
+					}						
+				}
+				
+			}
+	BMP180_Test();
 	}
 }

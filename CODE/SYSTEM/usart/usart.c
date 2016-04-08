@@ -9,9 +9,11 @@
  uint8_t A_count=0,B_count=0;
  uint8_t DBufferFlag1=0,DBufferFlag2=0;
  
- uint8_t message[10] = {0};
+ uint8_t message[42] = {0};
  bool OK_flag = false;
  bool CONNECT_flag = false;
+ bool NodeAddress = false;
+ bool NodeStat = false;
 
 //////////////////////////////////////////////////////////////////
 //加入以下代码,支持printf函数,而不需要选择use MicroLIB	  
@@ -173,8 +175,8 @@ void uart_init2(u32 bound)
 	///////////////////////////////////////////////////////////
 	  USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);//开启中断
 		NVIC_EnableIRQ(USART2_IRQn);	
-
 }
+
 void USART1_Send(uint8_t *str,uint8_t num)
 {
 	while(num!=0)
@@ -198,28 +200,10 @@ void USART1_IRQHandler(void)                	//串口1中断服务程序
 	USART_ClearITPendingBit(USART1,USART_IT_RXNE);
 	message[0] = USART1->DR & (uint16_t)0x01FF;
 	
-	if(message[0] == 'O')
-	{
-				tim_dly=0xffff;
-				while(!USART_GetITStatus(USART1,USART_IT_RXNE))
-				{
-					if(tim_dly==0)
-					{
-						g_flag1=0;
-						return ;
-					}
-					else tim_dly--;		
-				}//等待下一个字符的到来
-				USART_ClearITPendingBit(USART1,USART_IT_RXNE);
-				message[1] = USART1->DR & (uint16_t)0x01FF;	
-				if(message[1] == 'K')
-					OK_flag = true;
-				else
-					OK_flag = false;
-	}
-	else
 		if(message[0] == 0xFE)//等待帧头
 		{
+				for(i = 1; i < 8; i++)		//receive front 8 bytes
+				{  
 					tim_dly=0xffff;
 					while(!USART_GetITStatus(USART1,USART_IT_RXNE))
 					{
@@ -228,60 +212,49 @@ void USART1_IRQHandler(void)                	//串口1中断服务程序
 							g_flag1=0;
 							return ;
 						}
-						else tim_dly--;		
+						else tim_dly--;			
 					}//等待下一个字符的到来
 					USART_ClearITPendingBit(USART1,USART_IT_RXNE);
-					message[1] = USART1->DR & (uint16_t)0x01FF;
-					if(message[1] == 0x0F)//等待帧头
-					{							
-							for(i = 2; i < 10; i++)		//receive remain 8 bytes
-							{  
-								tim_dly=0xffff;
-								while(!USART_GetITStatus(USART1,USART_IT_RXNE))
-								{
-									if(tim_dly==0)
-									{
-										g_flag1=0;
-										return ;
-									}
-									else tim_dly--;			
-								}//等待下一个字符的到来
-								USART_ClearITPendingBit(USART1,USART_IT_RXNE);
-								message[i]=USART1->DR & (uint16_t)0x01FF;
-								sum ^= message[i];
-							}					
-							if(sum == 0)	//packet wrong!
+					message[i]=USART1->DR & (uint16_t)0x01FF;
+				}
+				if(message[7] == 0x1F){	//查询地址的响应，返回节点地址
+					for(i = 8; i < 42; i++)		//receive remain 42-8 bytes
+					{  
+						tim_dly=0xffff;
+						while(!USART_GetITStatus(USART1,USART_IT_RXNE))
+						{
+							if(tim_dly==0)
 							{
 								g_flag1=0;
 								return ;
 							}
-							else				//prase packet
+							else tim_dly--;			
+						}//等待下一个字符的到来
+						USART_ClearITPendingBit(USART1,USART_IT_RXNE);
+						message[i]=USART1->DR & (uint16_t)0x01FF;		
+					}
+					NodeAddress = true;
+					
+				}else
+				if(message[7] == 0x0B){		//查询状态的响应，返回节点状态
+						for(i = 8; i < 22; i++)		//receive remain 42-8 bytes
+						{  
+							tim_dly=0xffff;
+							while(!USART_GetITStatus(USART1,USART_IT_RXNE))
 							{
-								g_flag1=1;  //收完一个数据帧命令
-							}					
-						}
+								if(tim_dly==0)
+								{
+									g_flag1=0;
+									return ;
+								}
+								else tim_dly--;			
+							}//等待下一个字符的到来
+							USART_ClearITPendingBit(USART1,USART_IT_RXNE);
+							message[i]=USART1->DR & (uint16_t)0x01FF;		
+						}	
+						NodeStat = true;	
+				}
 		} 
-	else
-		if(message[0] == 'C')
-		{
-					tim_dly=0xffff;
-					while(!USART_GetITStatus(USART1,USART_IT_RXNE))
-					{
-						if(tim_dly==0)
-						{
-							g_flag1=0;
-							return ;
-						}
-						else tim_dly--;		
-					}//等待下一个字符的到来
-					USART_ClearITPendingBit(USART1,USART_IT_RXNE);
-					message[1] = USART1->DR & (uint16_t)0x01FF;	
-					if(message[1] == 'O')			//connect
-						CONNECT_flag = true;
-					else
-						if(message[1] == 'L')		//close
-							CONNECT_flag = false;
-		}		
 }
 
 void USART2_Send(uint8_t *str,uint8_t num)
