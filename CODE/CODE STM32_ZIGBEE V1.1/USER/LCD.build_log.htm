@@ -1,0 +1,53 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: ¦ÌVision V5.14.0.0
+Copyright (C) 2015 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: asdf asdf, asdf, LIC=VGX30-BDXPF-4S7Y4-F3C7N-1VVYL-MG1CS
+ 
+Tool Versions:
+Toolchain:       MDK-ARM Standard  Version: 5.14.0.0
+Toolchain Path:  F:\Keil_v5\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.05 update 1 (build 106)
+Assembler:       Armasm.exe V5.05 update 1 (build 106)
+Linker/Locator:  ArmLink.exe V5.05 update 1 (build 106)
+Library Manager: ArmAr.exe V5.05 update 1 (build 106)
+Hex Converter:   FromElf.exe V5.05 update 1 (build 106)
+CPU DLL:         SARMCM3.DLL V5.14.0.0
+Dialog DLL:      DARMSTM.DLL V1.65.0.0
+Target DLL:      Segger\JL2CM3.dll V2.99.13.0
+Dialog DLL:      TARMSTM.DLL V1.64.0.0
+ 
+<h2>Project:</h2>
+C:\Users\jialin\Documents\STM32F103_ZIGBEE_WIFI\CODE\CODE STM32_ZIGBEE\USER\LCD.uvproj
+Project File Date:  05/09/2016
+
+<h2>Output:</h2>
+Build target 'Target 1'
+compiling lcd.c...
+..\HARDWARE\HZK\Hzk16song.h(16752): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\LCD\lcd.c(10195): warning:  #520-D: initialization with "{...}" expected for aggregate object
+        u16 a[1] = {0},b[1] = 0;
+..\HARDWARE\LCD\lcd.c(10201): warning:  #223-D: function "SPI_Flash_Read" declared implicitly
+                SPI_Flash_Read(a, index, 1);
+..\HARDWARE\LCD\lcd.c(10231): warning:  #223-D: function "SPI_Flash_Read" declared implicitly
+        SPI_Flash_Read(buffer, c3 + 204800, 32);
+..\HARDWARE\LCD\lcd.c(10222): warning:  #177-D: variable "High8bit" was declared but never referenced
+        u8 High8bit,Low8bit;
+..\HARDWARE\LCD\lcd.c(10222): warning:  #177-D: variable "Low8bit" was declared but never referenced
+        u8 High8bit,Low8bit;
+..\HARDWARE\LCD\lcd.c(10225): warning:  #177-D: variable "c4" was declared but never referenced
+        unsigned char *c4;
+..\HARDWARE\LCD\lcd.c(10265): warning:  #223-D: function "SPI_Flash_Read" declared implicitly
+                SPI_Flash_Read(test, 204800 + 4 * 66904 - 112 , 6);
+..\HARDWARE\LCD\lcd.c: 8 warnings, 0 errors
+linking...
+Program Size: Code=24154 RO-data=3098 RW-data=168 ZI-data=5848  
+FromELF: creating hex file...
+".\LCD.axf" - 0 Error(s), 8 Warning(s).
+</pre>
+</body>
+</html>
