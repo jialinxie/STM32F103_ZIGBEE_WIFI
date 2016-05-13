@@ -21,33 +21,91 @@ Target DLL:      Segger\JL2CM3.dll V2.99.13.0
 Dialog DLL:      TARMSTM.DLL V1.64.0.0
  
 <h2>Project:</h2>
-C:\Users\jialin\Documents\STM32F103_ZIGBEE_WIFI\CODE\CODE STM32_ZIGBEE\USER\LCD.uvproj
-Project File Date:  05/09/2016
+C:\Users\jialin\Documents\STM32F103_ZIGBEE_WIFI\CODE\CODE STM32_ZIGBEE V1.1\USER\LCD.uvproj
+Project File Date:  05/13/2016
 
 <h2>Output:</h2>
 Build target 'Target 1'
-compiling lcd.c...
-..\HARDWARE\HZK\Hzk16song.h(16752): warning:  #1-D: last line of file ends without a newline
+compiling main.c...
+..\HARDWARE\WIFI\esp8266.h(10): warning:  #1-D: last line of file ends without a newline
   #endif
-..\HARDWARE\LCD\lcd.c(10195): warning:  #520-D: initialization with "{...}" expected for aggregate object
-        u16 a[1] = {0},b[1] = 0;
-..\HARDWARE\LCD\lcd.c(10201): warning:  #223-D: function "SPI_Flash_Read" declared implicitly
-                SPI_Flash_Read(a, index, 1);
-..\HARDWARE\LCD\lcd.c(10231): warning:  #223-D: function "SPI_Flash_Read" declared implicitly
-        SPI_Flash_Read(buffer, c3 + 204800, 32);
-..\HARDWARE\LCD\lcd.c(10222): warning:  #177-D: variable "High8bit" was declared but never referenced
-        u8 High8bit,Low8bit;
-..\HARDWARE\LCD\lcd.c(10222): warning:  #177-D: variable "Low8bit" was declared but never referenced
-        u8 High8bit,Low8bit;
-..\HARDWARE\LCD\lcd.c(10225): warning:  #177-D: variable "c4" was declared but never referenced
-        unsigned char *c4;
-..\HARDWARE\LCD\lcd.c(10265): warning:  #223-D: function "SPI_Flash_Read" declared implicitly
-                SPI_Flash_Read(test, 204800 + 4 * 66904 - 112 , 6);
-..\HARDWARE\LCD\lcd.c: 8 warnings, 0 errors
+..\HARDWARE\TempPre\bmp180.h(20): warning:  #47-D: incompatible redefinition of macro "bool" (declared at line 15 of "F:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h")
+  #define bool BOOL
+..\HARDWARE\TempPre\bmp180.h(24): warning:  #1295-D: Deprecated declaration bmp180Convert - give arg types
+  void bmp180Convert();
+..\HARDWARE\TempPre\bmp180.h(27): warning:  #1295-D: Deprecated declaration DATA_Diplay - give arg types
+  void DATA_Diplay();
+..\HARDWARE\TempPre\bmp180.h(30): warning:  #1295-D: Deprecated declaration I2C_Start - give arg types
+  void I2C_Start();
+..\HARDWARE\TempPre\bmp180.h(31): warning:  #1295-D: Deprecated declaration I2C_Stop - give arg types
+  void I2C_Stop();
+..\HARDWARE\TempPre\bmp180.h(33): warning:  #1295-D: Deprecated declaration I2C_RecvACK - give arg types
+  char I2C_RecvACK();
+..\HARDWARE\TempPre\bmp180.h(42): warning:  #1-D: last line of file ends without a newline
+  #endif
+main.c(23): warning:  #188-D: enumerated type mixed with another type
+  bool DisableWarning = false;
+main.c(72): warning:  #223-D: function "LCD_ShowString" declared implicitly
+        LCD_ShowString(216,0,"RST");//显示清屏区域
+main.c(79): warning:  #223-D: function "LCD_ShowString" declared implicitly
+                LCD_ShowString(25, 130, "雨滴传感器", BLACK, GREEN);
+main.c(88): warning:  #223-D: function "LCD_ShowString" declared implicitly
+                LCD_ShowString(142, 142, "振动报警", BLACK, GREEN);     
+main.c(96): warning:  #223-D: function "LCD_ShowString" declared implicitly
+                LCD_ShowString(30, 195, "火灾报警", BLACK, GREEN);
+main.c(104): warning:  #223-D: function "LCD_ShowString" declared implicitly
+                LCD_ShowString(142, 195, "金属报警", BLACK, GREEN);     
+main.c(113): warning:  #223-D: function "LCD_ShowString" declared implicitly
+                LCD_ShowString(25, 130, "雨滴传感器", WHITE, RED);
+main.c(123): warning:  #223-D: function "LCD_ShowString" declared implicitly
+                LCD_ShowString(142, 142, "振动报警", WHITE, RED);       
+main.c(132): warning:  #223-D: function "LCD_ShowString" declared implicitly
+                LCD_ShowString(30, 195, "火灾报警", WHITE, RED);
+main.c(141): warning:  #223-D: function "LCD_ShowString" declared implicitly
+                LCD_ShowString(142, 195, "金属报警", WHITE, RED);       
+main.c(189): warning:  #223-D: function "LCD_ShowPic" declared implicitly
+        LCD_ShowPic();
+main.c(203): warning:  #223-D: function "BMP180_Test" declared implicitly
+        BMP180_Test();                                                   
+main.c(208): warning:  #223-D: function "LCD_ShowString" declared implicitly
+        LCD_ShowString(25, 130, "雨滴传感器", BLACK, GREEN);
+main.c(262): warning:  #188-D: enumerated type mixed with another type
+                                                                        DisableWarning = true;
+main.c(265): warning:  #188-D: enumerated type mixed with another type
+                                                                        DisableWarning = false;
+main.c(270): warning:  #127-D: expected a statement
+                                                        }                                                       
+main.c(276): warning:  #188-D: enumerated type mixed with another type
+                                        NodeAddress = false;
+main.c(279): warning:  #175-D: subscript out of range
+                                        AskStat[5] = message[39];
+main.c(280): warning:  #175-D: subscript out of range
+                                        AskStat[6] = message[40];
+main.c(293): warning:  #188-D: enumerated type mixed with another type
+                                NodeStat = false;                       
+main.c(294): warning:  #175-D: subscript out of range
+                                if(message[20] == 1){           //warning
+main.c(295): warning:  #175-D: subscript out of range
+                                        switch(message[18]){
+main.c(306): warning:  #175-D: subscript out of range
+                                        switch(message[18]){
+main.c(150): warning:  #177-D: variable "j" was declared but never referenced
+        u8 i,j;
+main.c(151): warning:  #177-D: variable "fs" was declared but never referenced
+        FATFS fs;
+main.c(152): warning:  #177-D: variable "key" was declared but never referenced
+        u8 key;
+main.c(154): warning:  #177-D: variable "tmp_fcs" was declared but never referenced
+        u8 tmp_fcs=0,tmp_len,tmp, keyDat ,t_kdat ,temp_keydat;
+main.c(154): warning:  #177-D: variable "tmp_len" was declared but never referenced
+        u8 tmp_fcs=0,tmp_len,tmp, keyDat ,t_kdat ,temp_keydat;
+main.c(154): warning:  #177-D: variable "tmp" was declared but never referenced
+        u8 tmp_fcs=0,tmp_len,tmp, keyDat ,t_kdat ,temp_keydat;
+main.c: 37 warnings, 0 errors
 linking...
-Program Size: Code=24154 RO-data=3098 RW-data=168 ZI-data=5848  
+Program Size: Code=23958 RO-data=3098 RW-data=168 ZI-data=5848  
 FromELF: creating hex file...
-".\LCD.axf" - 0 Error(s), 8 Warning(s).
+".\LCD.axf" - 0 Error(s), 37 Warning(s).
 </pre>
 </body>
 </html>

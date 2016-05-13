@@ -184,11 +184,11 @@ void Convert_Pos(void)
 
 //中断,检测到PEN脚的一个下降沿.
 //置位Pen_Point.Key_Sta为按下状态
-//中断线0线上的中断检测
-void EXTI0_IRQHandler(void)
+//中断线7线上的中断检测
+void EXTI9_5_IRQHandler(void)
 { 		   			 
 	Pen_Point.Key_Sta=Key_Down;//按键按下  		  				 
-	EXTI->PR=1<<0;  //清除LINE0上的中断标志位 
+	EXTI->PR=1<<7;  //清除LINE7上的中断标志位 
 } 
 
 
@@ -291,7 +291,7 @@ void Touch_Adjust(void)
 	Pen_Point.xfac=0;//xfac用来标记是否校准过,所以校准之前必须清掉!以免错误	 
 	while(1)
 	{
-		if(Pen_Point.Key_Sta==Key_Down)//按键按下了
+ 		if(Pen_Point.Key_Sta==Key_Down)//按键按下了
 		{
 			if(Read_TP_Once())//得到单次按键值
 			{  								   
@@ -445,6 +445,49 @@ void Touch_Adjust(void)
 }		  
 
 
+static void NVIC_Configuration(void)
+{
+	NVIC_InitTypeDef NVIC_InitStructure;
+	
+	//configure one bit for preemption priority
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1); 					//1 bits for pre-emption priority   3 bits for subpriority
+	
+	//配置P[A|B|C|D|E|]7为中断源
+	NVIC_InitStructure.NVIC_IRQChannel = EXTI9_5_IRQn;				//External Line[9:5] Interrupts; KEY是PB7 被包含在5-9中
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0; //中断强占优先级最高
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;				//中断响应优先级最高
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;						//使能中断
+	NVIC_Init(&NVIC_InitStructure);
+}
+
+void EXTI_PB7_Config(void)
+{
+		GPIO_InitTypeDef GPIO_InitStructure;
+		EXTI_InitTypeDef EXTI_InitStructure;
+	
+	 //config the extiline(PB7_ clock and AFIO clock AFIO:端口复用功能  配置中断时一定要开
+		RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO, ENABLE);
+	
+		//config the NVIC(PB7)
+		NVIC_Configuration();
+	
+		//EXT1 line gpio config(PB7)
+		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
+		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;	//上拉输入
+		GPIO_Init(GPIOB, &GPIO_InitStructure);
+	
+		//EXT1 line(PB7) mode config
+		GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource7);
+		EXTI_InitStructure.EXTI_Line = EXTI_Line7;
+		EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+		EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;	//下降沿中断
+	
+		EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+		EXTI_Init(&EXTI_InitStructure);
+}
+
+
+
 //外部中断初始化函数
 void Touch_Init(void)
 {	
@@ -453,33 +496,37 @@ void Touch_Init(void)
 	EXTI_InitTypeDef EXTI_InitStructure;	//外部中断线		    		   
 	//注意,时钟使能之后,对GPIO的操作才有效
 	//所以上拉之前,必须使能时钟.才能实现真正的上拉输出
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA  | RCC_APB2Periph_AFIO, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB  | RCC_APB2Periph_AFIO, ENABLE);
 	
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1|GPIO_Pin_2|GPIO_Pin_15;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3|GPIO_Pin_4|GPIO_Pin_5;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //推挽输出 
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);	
+	GPIO_Init(GPIOB, &GPIO_InitStructure);	
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_3;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6|GPIO_Pin_7;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;  //上拉输入
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
- 	   
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	   
  	Read_ADS(&Pen_Point.X,&Pen_Point.Y);//第一次读取初始化	
-			 
+/*			 
 	NVIC_InitStructure.NVIC_IRQChannel = EXTI0_IRQn; //使能按键所在的外部中断通道
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2; //先占优先级2级
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0; //从优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //使能外部中断通道
 	NVIC_Init(&NVIC_InitStructure); //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器 
 
+
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);	  
-    GPIO_EXTILineConfig(GPIO_PortSourceGPIOA, GPIO_PinSource0); 
-	  
-	EXTI_InitStructure.EXTI_Line = EXTI_Line0;	//外部线路EXIT1
+  GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource7); 
+
+	EXTI_InitStructure.EXTI_Line = EXTI_Line7;	//外部线路EXIT1
 	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;			//设外外部中断模式:EXTI线路为中断请求
 	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;  //外部中断触发沿选择:设置输入线路下降沿为中断请求
 	EXTI_InitStructure.EXTI_LineCmd = ENABLE;		//使能外部中断新状态
 	EXTI_Init(&EXTI_InitStructure);		//根据EXTI_InitStruct中指定的参数初始化外设EXTI寄存器
+*/
+	EXTI_PB7_Config();
+
 #ifdef ADJ_SAVE_ENABLE	  
 	AT24CXX_Init();//初始化24CXX
 	if(Get_Adjdata())return;//已经校准
@@ -489,11 +536,7 @@ void Touch_Init(void)
 	    Touch_Adjust();  //屏幕校准 
 		Save_Adjdata();	 
 	}			
-	Get_Adjdata();
-#else
-	LCD_Clear(WHITE);//清屏
-    Touch_Adjust();  //屏幕校准,带自动保存			   
+	Get_Adjdata();	   
 #endif												 
  
 }
-

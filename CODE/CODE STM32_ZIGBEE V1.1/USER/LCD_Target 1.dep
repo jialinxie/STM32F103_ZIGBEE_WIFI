@@ -1,5 +1,5 @@
 Dependencies for Project 'LCD', Target 'Target 1': (DO NOT MODIFY !)
-F (.\main.c)(0x57306C0E)(-c --cpu Cortex-M3 -g -O3 --apcs=interwork -I..\HARDWARE\LED -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USER -I..\STM32F10x_FWLib\inc -I..\CORE -I..\HARDWARE\TIMER -I..\HARDWARE\LCD -I..\HARDWARE\FLASH -I..\HARDWARE\TOUCH -I..\HARDWARE\24CXX -I..\HARDWARE\IIC -I..\HARDWARE\MMC_SD -I..\HARDWARE\SPI -I..\HARDWARE\RTC -I..\TEXT -I..\FATFS\src -I..\FATFS\exfuns -I..\JPEG -I..\USB\CFG -I..\USB\CORE -I..\HARDWARE\TempPre -I..\HARDWARE\TM1638 -I..\HARDWARE\HZK -I..\HARDWARE\WIFI-I F:\Keil_v5\ARM\RV31\INC-I F:\Keil_v5\ARM\CMSIS\Include-I F:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="514" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER -DFlash_Ziku-o .\main.o --omf_browse .\main.crf --depend .\main.d)
+F (.\main.c)(0x57356848)(-c --cpu Cortex-M3 -g -O3 --apcs=interwork -I..\HARDWARE\LED -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USER -I..\STM32F10x_FWLib\inc -I..\CORE -I..\HARDWARE\TIMER -I..\HARDWARE\LCD -I..\HARDWARE\FLASH -I..\HARDWARE\TOUCH -I..\HARDWARE\24CXX -I..\HARDWARE\IIC -I..\HARDWARE\MMC_SD -I..\HARDWARE\SPI -I..\HARDWARE\RTC -I..\TEXT -I..\FATFS\src -I..\FATFS\exfuns -I..\JPEG -I..\USB\CFG -I..\USB\CORE -I..\HARDWARE\TempPre -I..\HARDWARE\TM1638 -I..\HARDWARE\HZK -I..\HARDWARE\WIFI-I F:\Keil_v5\ARM\RV31\INC-I F:\Keil_v5\ARM\CMSIS\Include-I F:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="514" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER -DFlash_Ziku-o .\main.o --omf_browse .\main.crf --depend .\main.d)
 I (..\HARDWARE\LED\led.h)(0x57306BB5)
 I (..\USER\stm32f10x.h)(0x57306BB6)
 I (..\CORE\core_cm3.h)(0x57306BB5)
@@ -41,7 +41,7 @@ I (..\HARDWARE\24CXX\24cxx.h)(0x57306BB5)
 I (..\HARDWARE\RTC\rtc.h)(0x57306BB5)
 I (..\HARDWARE\SPI\spi.h)(0x57306BB5)
 I (..\HARDWARE\FLASH\flash.h)(0x57306BB5)
-I (..\HARDWARE\TOUCH\touch.h)(0x57306BB5)
+I (..\HARDWARE\TOUCH\touch.h)(0x57356203)
 I (..\HARDWARE\TM1638\tm1638.h)(0x57306BB5)
 I (..\FATFS\src\ff.h)(0x57306BB5)
 I (..\FATFS\src\integer.h)(0x57306BB5)
@@ -244,8 +244,8 @@ I (..\STM32F10x_FWLib\inc\stm32f10x_wwdg.h)(0x57306BB6)
 I (..\STM32F10x_FWLib\inc\misc.h)(0x57306BB5)
 I (..\HARDWARE\SPI\spi.h)(0x57306BB5)
 I (..\SYSTEM\delay\delay.h)(0x57306BB6)
-F (..\HARDWARE\TOUCH\touch.c)(0x57306BB5)(-c --cpu Cortex-M3 -g -O3 --apcs=interwork -I..\HARDWARE\LED -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USER -I..\STM32F10x_FWLib\inc -I..\CORE -I..\HARDWARE\TIMER -I..\HARDWARE\LCD -I..\HARDWARE\FLASH -I..\HARDWARE\TOUCH -I..\HARDWARE\24CXX -I..\HARDWARE\IIC -I..\HARDWARE\MMC_SD -I..\HARDWARE\SPI -I..\HARDWARE\RTC -I..\TEXT -I..\FATFS\src -I..\FATFS\exfuns -I..\JPEG -I..\USB\CFG -I..\USB\CORE -I..\HARDWARE\TempPre -I..\HARDWARE\TM1638 -I..\HARDWARE\HZK -I..\HARDWARE\WIFI-I F:\Keil_v5\ARM\RV31\INC-I F:\Keil_v5\ARM\CMSIS\Include-I F:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="514" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER -DFlash_Ziku-o .\touch.o --omf_browse .\touch.crf --depend .\touch.d)
-I (..\HARDWARE\TOUCH\touch.h)(0x57306BB5)
+F (..\HARDWARE\TOUCH\touch.c)(0x57356744)(-c --cpu Cortex-M3 -g -O3 --apcs=interwork -I..\HARDWARE\LED -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USER -I..\STM32F10x_FWLib\inc -I..\CORE -I..\HARDWARE\TIMER -I..\HARDWARE\LCD -I..\HARDWARE\FLASH -I..\HARDWARE\TOUCH -I..\HARDWARE\24CXX -I..\HARDWARE\IIC -I..\HARDWARE\MMC_SD -I..\HARDWARE\SPI -I..\HARDWARE\RTC -I..\TEXT -I..\FATFS\src -I..\FATFS\exfuns -I..\JPEG -I..\USB\CFG -I..\USB\CORE -I..\HARDWARE\TempPre -I..\HARDWARE\TM1638 -I..\HARDWARE\HZK -I..\HARDWARE\WIFI-I F:\Keil_v5\ARM\RV31\INC-I F:\Keil_v5\ARM\CMSIS\Include-I F:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="514" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER -DFlash_Ziku-o .\touch.o --omf_browse .\touch.crf --depend .\touch.d)
+I (..\HARDWARE\TOUCH\touch.h)(0x57356203)
 I (..\SYSTEM\sys\sys.h)(0x57306BB6)
 I (..\USER\stm32f10x.h)(0x57306BB6)
 I (..\CORE\core_cm3.h)(0x57306BB5)
@@ -638,7 +638,7 @@ I (F:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5475F300)
 I (F:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5475F300)
 F (..\CORE\core_cm3.c)(0x57306BB5)(-c --cpu Cortex-M3 -g -O3 --apcs=interwork -I..\HARDWARE\LED -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USER -I..\STM32F10x_FWLib\inc -I..\CORE -I..\HARDWARE\TIMER -I..\HARDWARE\LCD -I..\HARDWARE\FLASH -I..\HARDWARE\TOUCH -I..\HARDWARE\24CXX -I..\HARDWARE\IIC -I..\HARDWARE\MMC_SD -I..\HARDWARE\SPI -I..\HARDWARE\RTC -I..\TEXT -I..\FATFS\src -I..\FATFS\exfuns -I..\JPEG -I..\USB\CFG -I..\USB\CORE -I..\HARDWARE\TempPre -I..\HARDWARE\TM1638 -I..\HARDWARE\HZK -I..\HARDWARE\WIFI-I F:\Keil_v5\ARM\RV31\INC-I F:\Keil_v5\ARM\CMSIS\Include-I F:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="514" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER -DFlash_Ziku-o .\core_cm3.o --omf_browse .\core_cm3.crf --depend .\core_cm3.d)
 I (F:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5475F300)
-F (..\CORE\startup_stm32f10x_md.s)(0x57306BB5)(--cpu Cortex-M3 -g --apcs=interwork -I F:\Keil_v5\ARM\RV31\INC-I F:\Keil_v5\ARM\CMSIS\Include-I F:\Keil_v5\ARM\Inc\ST\STM32F10x--pd "__UVISION_VERSION SETA 514"--list .\startup_stm32f10x_md.lst --xref -o .\startup_stm32f10x_md.o --depend .\startup_stm32f10x_md.d)
+F (..\CORE\startup_stm32f10x_md.s)(0x57356790)(--cpu Cortex-M3 -g --apcs=interwork -I F:\Keil_v5\ARM\RV31\INC-I F:\Keil_v5\ARM\CMSIS\Include-I F:\Keil_v5\ARM\Inc\ST\STM32F10x--pd "__UVISION_VERSION SETA 514"--list .\startup_stm32f10x_md.lst --xref -o .\startup_stm32f10x_md.o --depend .\startup_stm32f10x_md.d)
 F (..\STM32F10x_FWLib\src\misc.c)(0x57306BB6)(-c --cpu Cortex-M3 -g -O3 --apcs=interwork -I..\HARDWARE\LED -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USER -I..\STM32F10x_FWLib\inc -I..\CORE -I..\HARDWARE\TIMER -I..\HARDWARE\LCD -I..\HARDWARE\FLASH -I..\HARDWARE\TOUCH -I..\HARDWARE\24CXX -I..\HARDWARE\IIC -I..\HARDWARE\MMC_SD -I..\HARDWARE\SPI -I..\HARDWARE\RTC -I..\TEXT -I..\FATFS\src -I..\FATFS\exfuns -I..\JPEG -I..\USB\CFG -I..\USB\CORE -I..\HARDWARE\TempPre -I..\HARDWARE\TM1638 -I..\HARDWARE\HZK -I..\HARDWARE\WIFI-I F:\Keil_v5\ARM\RV31\INC-I F:\Keil_v5\ARM\CMSIS\Include-I F:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="514" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER -DFlash_Ziku-o .\misc.o --omf_browse .\misc.crf --depend .\misc.d)
 I (..\STM32F10x_FWLib\inc\misc.h)(0x57306BB5)
 I (..\USER\stm32f10x.h)(0x57306BB6)

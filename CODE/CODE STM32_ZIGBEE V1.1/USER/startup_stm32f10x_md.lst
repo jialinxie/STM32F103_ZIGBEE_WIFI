@@ -401,19 +401,19 @@ ARM Macro Assembler    Page 7
   237 0000001A         EXTI2_IRQHandler
   238 0000001A         EXTI3_IRQHandler
   239 0000001A         EXTI4_IRQHandler
-  240 0000001A         DMA1_Channel1_IRQHandler
-  241 0000001A         DMA1_Channel2_IRQHandler
-  242 0000001A         DMA1_Channel3_IRQHandler
-  243 0000001A         DMA1_Channel4_IRQHandler
-  244 0000001A         DMA1_Channel5_IRQHandler
-  245 0000001A         DMA1_Channel6_IRQHandler
-  246 0000001A         DMA1_Channel7_IRQHandler
-  247 0000001A         ADC1_2_IRQHandler
-  248 0000001A         USB_HP_CAN1_TX_IRQHandler
-  249 0000001A         USB_LP_CAN1_RX0_IRQHandler
-  250 0000001A         CAN1_RX1_IRQHandler
-  251 0000001A         CAN1_SCE_IRQHandler
-  252 0000001A         EXTI9_5_IRQHandler
+  240 0000001A         EXTI9_5_IRQHandler
+  241 0000001A         DMA1_Channel1_IRQHandler
+  242 0000001A         DMA1_Channel2_IRQHandler
+  243 0000001A         DMA1_Channel3_IRQHandler
+  244 0000001A         DMA1_Channel4_IRQHandler
+  245 0000001A         DMA1_Channel5_IRQHandler
+  246 0000001A         DMA1_Channel6_IRQHandler
+  247 0000001A         DMA1_Channel7_IRQHandler
+  248 0000001A         ADC1_2_IRQHandler
+  249 0000001A         USB_HP_CAN1_TX_IRQHandler
+  250 0000001A         USB_LP_CAN1_RX0_IRQHandler
+  251 0000001A         CAN1_RX1_IRQHandler
+  252 0000001A         CAN1_SCE_IRQHandler
   253 0000001A         TIM1_BRK_IRQHandler
   254 0000001A         TIM1_UP_IRQHandler
   255 0000001A         TIM1_TRG_COM_IRQHandler
@@ -603,7 +603,7 @@ ADC1_2_IRQHandler 0000001A
 
 Symbol: ADC1_2_IRQHandler
    Definitions
-      At line 247 in file ..\CORE\startup_stm32f10x_md.s
+      At line 248 in file ..\CORE\startup_stm32f10x_md.s
    Uses
       At line 97 in file ..\CORE\startup_stm32f10x_md.s
       At line 203 in file ..\CORE\startup_stm32f10x_md.s
@@ -621,7 +621,7 @@ CAN1_RX1_IRQHandler 0000001A
 
 Symbol: CAN1_RX1_IRQHandler
    Definitions
-      At line 250 in file ..\CORE\startup_stm32f10x_md.s
+      At line 251 in file ..\CORE\startup_stm32f10x_md.s
    Uses
       At line 100 in file ..\CORE\startup_stm32f10x_md.s
       At line 206 in file ..\CORE\startup_stm32f10x_md.s
@@ -630,7 +630,7 @@ CAN1_SCE_IRQHandler 0000001A
 
 Symbol: CAN1_SCE_IRQHandler
    Definitions
-      At line 251 in file ..\CORE\startup_stm32f10x_md.s
+      At line 252 in file ..\CORE\startup_stm32f10x_md.s
    Uses
       At line 101 in file ..\CORE\startup_stm32f10x_md.s
       At line 207 in file ..\CORE\startup_stm32f10x_md.s
@@ -639,7 +639,7 @@ DMA1_Channel1_IRQHandler 0000001A
 
 Symbol: DMA1_Channel1_IRQHandler
    Definitions
-      At line 240 in file ..\CORE\startup_stm32f10x_md.s
+      At line 241 in file ..\CORE\startup_stm32f10x_md.s
    Uses
       At line 90 in file ..\CORE\startup_stm32f10x_md.s
       At line 196 in file ..\CORE\startup_stm32f10x_md.s
@@ -648,7 +648,7 @@ DMA1_Channel2_IRQHandler 0000001A
 
 Symbol: DMA1_Channel2_IRQHandler
    Definitions
-      At line 241 in file ..\CORE\startup_stm32f10x_md.s
+      At line 242 in file ..\CORE\startup_stm32f10x_md.s
    Uses
 
 
@@ -663,7 +663,7 @@ DMA1_Channel3_IRQHandler 0000001A
 
 Symbol: DMA1_Channel3_IRQHandler
    Definitions
-      At line 242 in file ..\CORE\startup_stm32f10x_md.s
+      At line 243 in file ..\CORE\startup_stm32f10x_md.s
    Uses
       At line 92 in file ..\CORE\startup_stm32f10x_md.s
       At line 198 in file ..\CORE\startup_stm32f10x_md.s
@@ -672,7 +672,7 @@ DMA1_Channel4_IRQHandler 0000001A
 
 Symbol: DMA1_Channel4_IRQHandler
    Definitions
-      At line 243 in file ..\CORE\startup_stm32f10x_md.s
+      At line 244 in file ..\CORE\startup_stm32f10x_md.s
    Uses
       At line 93 in file ..\CORE\startup_stm32f10x_md.s
       At line 199 in file ..\CORE\startup_stm32f10x_md.s
@@ -681,7 +681,7 @@ DMA1_Channel5_IRQHandler 0000001A
 
 Symbol: DMA1_Channel5_IRQHandler
    Definitions
-      At line 244 in file ..\CORE\startup_stm32f10x_md.s
+      At line 245 in file ..\CORE\startup_stm32f10x_md.s
    Uses
       At line 94 in file ..\CORE\startup_stm32f10x_md.s
       At line 200 in file ..\CORE\startup_stm32f10x_md.s
@@ -690,7 +690,7 @@ DMA1_Channel6_IRQHandler 0000001A
 
 Symbol: DMA1_Channel6_IRQHandler
    Definitions
-      At line 245 in file ..\CORE\startup_stm32f10x_md.s
+      At line 246 in file ..\CORE\startup_stm32f10x_md.s
    Uses
       At line 95 in file ..\CORE\startup_stm32f10x_md.s
       At line 201 in file ..\CORE\startup_stm32f10x_md.s
@@ -699,7 +699,7 @@ DMA1_Channel7_IRQHandler 0000001A
 
 Symbol: DMA1_Channel7_IRQHandler
    Definitions
-      At line 246 in file ..\CORE\startup_stm32f10x_md.s
+      At line 247 in file ..\CORE\startup_stm32f10x_md.s
    Uses
       At line 96 in file ..\CORE\startup_stm32f10x_md.s
       At line 202 in file ..\CORE\startup_stm32f10x_md.s
@@ -791,7 +791,7 @@ EXTI9_5_IRQHandler 0000001A
 
 Symbol: EXTI9_5_IRQHandler
    Definitions
-      At line 252 in file ..\CORE\startup_stm32f10x_md.s
+      At line 240 in file ..\CORE\startup_stm32f10x_md.s
    Uses
       At line 102 in file ..\CORE\startup_stm32f10x_md.s
       At line 208 in file ..\CORE\startup_stm32f10x_md.s
@@ -1094,7 +1094,7 @@ USB_HP_CAN1_TX_IRQHandler 0000001A
 
 Symbol: USB_HP_CAN1_TX_IRQHandler
    Definitions
-      At line 248 in file ..\CORE\startup_stm32f10x_md.s
+      At line 249 in file ..\CORE\startup_stm32f10x_md.s
    Uses
       At line 98 in file ..\CORE\startup_stm32f10x_md.s
       At line 204 in file ..\CORE\startup_stm32f10x_md.s
@@ -1103,7 +1103,7 @@ USB_LP_CAN1_RX0_IRQHandler 0000001A
 
 Symbol: USB_LP_CAN1_RX0_IRQHandler
    Definitions
-      At line 249 in file ..\CORE\startup_stm32f10x_md.s
+      At line 250 in file ..\CORE\startup_stm32f10x_md.s
    Uses
 
 

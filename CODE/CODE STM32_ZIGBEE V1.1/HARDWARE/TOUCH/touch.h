@@ -28,11 +28,11 @@ typedef struct
 extern Pen_Holder Pen_Point;
 
 //与触摸屏芯片连接引脚	   
-#define PEN  PAin(0)   //PA0  INT
-#define DOUT PAin(3)   //PA3  MISO
-#define TDIN PAout(2)  //PA2  MOSI
-#define TCLK PAout(1)  //PA1  SCLK
-#define TCS  PAout(15) //PA15 CS    
+#define PEN  PBin(7)   //PB7  INT
+#define DOUT PBin(6)   //PB6  MISO
+#define TDIN PBout(5)  //PB5  MOSI
+#define TCLK PBout(3)  //PB3  SCLK
+#define TCS  PBout(4)  //PB4 CS    
 
 //ADS7843/7846/UH7843/7846/XPT2046/TSC2046 指令集
 //#define CMD_RDX   0X90  //0B10010000即用差分方式读X坐标
@@ -42,7 +42,7 @@ extern u8 CMD_RDY;
    											 
 #define TEMP_RD	0XF0  //0B11110000即用差分方式读Y坐标    
 //使用保存
-#define ADJ_SAVE_ENABLE	    
+//#define ADJ_SAVE_ENABLE	    
 			  
 void Touch_Init(void);		 //初始化
 u8 Read_ADS(u16 *x,u16 *y);	 //带舍弃的双方向读取

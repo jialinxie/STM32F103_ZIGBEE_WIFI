@@ -237,6 +237,7 @@ EXTI1_IRQHandler
 EXTI2_IRQHandler
 EXTI3_IRQHandler
 EXTI4_IRQHandler
+EXTI9_5_IRQHandler
 DMA1_Channel1_IRQHandler
 DMA1_Channel2_IRQHandler
 DMA1_Channel3_IRQHandler
@@ -249,7 +250,6 @@ USB_HP_CAN1_TX_IRQHandler
 USB_LP_CAN1_RX0_IRQHandler
 CAN1_RX1_IRQHandler
 CAN1_SCE_IRQHandler
-EXTI9_5_IRQHandler
 TIM1_BRK_IRQHandler
 TIM1_UP_IRQHandler
 TIM1_TRG_COM_IRQHandler

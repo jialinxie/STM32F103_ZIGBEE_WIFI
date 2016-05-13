@@ -18,6 +18,7 @@
 #include "esp8266.h"
 #include "rtc.h" 
 #include "bmp180.h"
+#include "touch.h" 
 
 bool DisableWarning = false;
 
@@ -173,15 +174,22 @@ int main(void)
 	//SPI_Flash_Write((u8 *)gImage_1, 0, 38400);	
 	//SPI_Flash_Write((u8 *)gImage_2, 38400, 38400);		
 	//SPI_Flash_Write((u8 *)gImage_3, 38400 * 2, 38400);	
-	//SPI_Flash_Write((u8 *)gImage_4, 38400 * 3, 38400);		
+	//SPI_Flash_Write((u8 *)gImage_4, 38400 * 3, 38400);
+
+	Touch_Init();
+	LCD_Clear(WHITE);//清屏
+  Touch_Adjust();  //屏幕校准,带自动保存	
+	
+	RTC_Init();
+
 #ifdef Flash_Ziku	
 	Ziku();
 #endif
 	Tm1638_Test();		
 	LCD_ShowPic();
-	
-	RTC_Init();
-		
+
+
+
 	POINT_COLOR=BLACK;
 	LCD_DrawRectangle(1,1,239,319, BLACK);
 	LCD_DrawRectangle(10,10,230,310, BLACK);
@@ -193,7 +201,7 @@ int main(void)
 	delay_ms(1000);	
 
 	BMP180_Test();			 			    	 
-	
+
 	POINT_COLOR=RED;
  	POINT_COLOR=BLUE;  
 
@@ -204,6 +212,8 @@ int main(void)
 	LCD_ShowString(142, 195, "金属报警", BLACK, GREEN);	
   LCD_ShowString(50,245,"Zigbee Connecting...", BLACK, WHITE);
 	//LCD_ShowString(50,245,"WIFI Connecting.....", BLACK, WHITE);
+	
+
 	
 	while(1)
 	{	
