@@ -139,6 +139,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
+          <Name></Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -234,9 +235,9 @@
         <Bp>
           <Number>4</Number>
           <Type>0</Type>
-          <LineNumber>360</LineNumber>
+          <LineNumber>288</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134226034</Address>
+          <Address>134225614</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -245,19 +246,39 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\HARDWARE\TOUCH\touch.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\LCD\../HARDWARE/TOUCH/touch.c\360</Expression>
+          <Expression>\\LCD\../HARDWARE/TOUCH/touch.c\288</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>NodeAddress</ItemText>
+          <ItemText>pos_temp[cnt]</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>NodeStat</ItemText>
+          <ItemText>cnt</ItemText>
+        </Ww>
+        <Ww>
+          <count>2</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>x1</ItemText>
+        </Ww>
+        <Ww>
+          <count>3</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>y1</ItemText>
+        </Ww>
+        <Ww>
+          <count>4</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>x2</ItemText>
+        </Ww>
+        <Ww>
+          <count>5</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>y2</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>

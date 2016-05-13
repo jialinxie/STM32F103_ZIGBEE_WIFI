@@ -176,10 +176,10 @@ int main(void)
 	//SPI_Flash_Write((u8 *)gImage_3, 38400 * 2, 38400);	
 	//SPI_Flash_Write((u8 *)gImage_4, 38400 * 3, 38400);
 
-	Touch_Init();
+  Touch_Init();
 	LCD_Clear(WHITE);//清屏
   Touch_Adjust();  //屏幕校准,带自动保存	
-	
+
 	RTC_Init();
 
 #ifdef Flash_Ziku	

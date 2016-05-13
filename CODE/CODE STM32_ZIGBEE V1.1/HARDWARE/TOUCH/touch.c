@@ -41,7 +41,7 @@ u16 ADS_Read_AD(u8 CMD)
 	TCLK=1;//给1个时钟，清除BUSY   	    
 	TCLK=0; 	 
 	for(count=0;count<16;count++)  
-	{ 				  
+	{ 				 
 		Num<<=1; 	 
 		TCLK=0;//下降沿有效  	    	   
 		TCLK=1;
@@ -157,18 +157,6 @@ void Drow_Touch_Point(u8 x,u16 y)
 	LCD_DrawPoint(x-1,y-1, BLUE);
 	Draw_Circle(x,y,6);//画中心圈
 }	  
-#if 0
-
-//画一个大点
-//2*2的点			   
-void Draw_Big_Point(u8 x,u16 y)
-{	    
-	LCD_DrawPoint(x,y);//中心点 
-	LCD_DrawPoint(x+1,y);
-	LCD_DrawPoint(x,y+1);
-	LCD_DrawPoint(x+1,y+1);	 	  	
-}
-#endif
 
 //转换结果
 //根据触摸屏的校准参数来决定转换后的结果,保存在X0,Y0中
@@ -195,8 +183,8 @@ void EXTI9_5_IRQHandler(void)
 //PEN中断设置	 
 void Pen_Int_Set(u8 en)
 {
-	if(en)EXTI->IMR|=1<<0;   //开启line0上的中断	  	
-	else EXTI->IMR&=~(1<<0); //关闭line0上的中断	   
+	if(en)EXTI->IMR|=1<<7;   //开启line7上的中断	  	
+	else EXTI->IMR&=~(1<<7); //关闭line7上的中断	   
 }	  
 
 
@@ -258,8 +246,6 @@ u8 Get_Adjdata(void)
 }
 #endif	
 
-
-
 void ADJ_INFO_SHOW(u8*str)
 {
 	LCD_ShowString(40,40,"x1:       y1:       ");
@@ -270,18 +256,20 @@ void ADJ_INFO_SHOW(u8*str)
  	LCD_ShowString(40,120,str);					   
 }
 	 
+signed short pos_temp[4][2];//坐标缓存值
+	u8  cnt=0;	
 
 //触摸屏校准代码
 //得到四个校准参数
 void Touch_Adjust(void)
 {								 
-	signed short pos_temp[4][2];//坐标缓存值
-	u8  cnt=0;	
+
+
 	u16 d1,d2;
 	u32 tem1,tem2;
 	float fac; 	   
 	cnt=0;				
-	POINT_COLOR=BLUE;
+	POINT_COLOR=BLACK;
 	BACK_COLOR =WHITE;
 	LCD_Clear(WHITE);//清屏   
 	POINT_COLOR=RED;//红色 
@@ -297,24 +285,25 @@ void Touch_Adjust(void)
 			{  								   
 				pos_temp[cnt][0]=Pen_Point.X;
 				pos_temp[cnt][1]=Pen_Point.Y;
-				cnt++;
+				cnt++;			
 			}			 
 			switch(cnt)
 			{			   
 				case 1:
-					LCD_Clear(WHITE);//清屏 
+					LCD_Clear(RED);//清屏 
 					Drow_Touch_Point(220,20);//画点2
 					break;
 				case 2:
-					LCD_Clear(WHITE);//清屏 
+					LCD_Clear(BLUE);//清屏 
 					Drow_Touch_Point(20,300);//画点3
 					break;
 				case 3:
-					LCD_Clear(WHITE);//清屏 
+					LCD_Clear(YELLOW);//清屏 
 					Drow_Touch_Point(220,300);//画点4
 					break;
 				case 4:	 //全部四个点已经得到
 	    		    //对边相等
+					LCD_Clear(GREEN);	
 					tem1=abs(pos_temp[0][0]-pos_temp[1][0]);//x1-x2
 					tem2=abs(pos_temp[0][1]-pos_temp[1][1]);//y1-y2
 					tem1*=tem1;
@@ -444,50 +433,6 @@ void Touch_Adjust(void)
 	} 
 }		  
 
-
-static void NVIC_Configuration(void)
-{
-	NVIC_InitTypeDef NVIC_InitStructure;
-	
-	//configure one bit for preemption priority
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1); 					//1 bits for pre-emption priority   3 bits for subpriority
-	
-	//配置P[A|B|C|D|E|]7为中断源
-	NVIC_InitStructure.NVIC_IRQChannel = EXTI9_5_IRQn;				//External Line[9:5] Interrupts; KEY是PB7 被包含在5-9中
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0; //中断强占优先级最高
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;				//中断响应优先级最高
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;						//使能中断
-	NVIC_Init(&NVIC_InitStructure);
-}
-
-void EXTI_PB7_Config(void)
-{
-		GPIO_InitTypeDef GPIO_InitStructure;
-		EXTI_InitTypeDef EXTI_InitStructure;
-	
-	 //config the extiline(PB7_ clock and AFIO clock AFIO:端口复用功能  配置中断时一定要开
-		RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO, ENABLE);
-	
-		//config the NVIC(PB7)
-		NVIC_Configuration();
-	
-		//EXT1 line gpio config(PB7)
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
-		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;	//上拉输入
-		GPIO_Init(GPIOB, &GPIO_InitStructure);
-	
-		//EXT1 line(PB7) mode config
-		GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource7);
-		EXTI_InitStructure.EXTI_Line = EXTI_Line7;
-		EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-		EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;	//下降沿中断
-	
-		EXTI_InitStructure.EXTI_LineCmd = ENABLE;
-		EXTI_Init(&EXTI_InitStructure);
-}
-
-
-
 //外部中断初始化函数
 void Touch_Init(void)
 {	
@@ -508,13 +453,12 @@ void Touch_Init(void)
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 	   
  	Read_ADS(&Pen_Point.X,&Pen_Point.Y);//第一次读取初始化	
-/*			 
-	NVIC_InitStructure.NVIC_IRQChannel = EXTI0_IRQn; //使能按键所在的外部中断通道
+		
+	NVIC_InitStructure.NVIC_IRQChannel = EXTI9_5_IRQn; //使能按键所在的外部中断通道
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2; //先占优先级2级
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0; //从优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //使能外部中断通道
 	NVIC_Init(&NVIC_InitStructure); //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器 
-
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);	  
   GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource7); 
@@ -524,8 +468,6 @@ void Touch_Init(void)
 	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;  //外部中断触发沿选择:设置输入线路下降沿为中断请求
 	EXTI_InitStructure.EXTI_LineCmd = ENABLE;		//使能外部中断新状态
 	EXTI_Init(&EXTI_InitStructure);		//根据EXTI_InitStruct中指定的参数初始化外设EXTI寄存器
-*/
-	EXTI_PB7_Config();
 
 #ifdef ADJ_SAVE_ENABLE	  
 	AT24CXX_Init();//初始化24CXX
